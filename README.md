@@ -136,9 +136,10 @@ xattr -dr com.apple.quarantine Notchd.app
 ### Build from source
 It takes about a minute.
 
-**Requirements:** macOS 14 Sonoma or later, Xcode or the Command Line Tools (`xcode-select --install`), and `cmake` for the media helper (`brew install cmake`).
+**Requirements:** macOS 14 Sonoma or later, Xcode or the Command Line Tools (`xcode-select --install`), and `cmake` for the media helper.
 
 ```sh
+brew install cmake   # skip if you already have cmake
 git clone https://github.com/notchd-app/notchd.git
 cd notchd
 ./scripts/bundle.sh
