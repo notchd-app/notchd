@@ -1,4 +1,5 @@
 /* notchd — Romanian. */
+
 "Choose Shortcuts…" = "Alege scurtături…";
 "Run “%@”" = "Rulează „%@”";
 "Camera access needed" = "Este necesar accesul la cameră";
@@ -298,6 +299,7 @@
 "Clipboard" = "Clipboard";
 "Clipboard history is off" = "Istoricul clipboardului este dezactivat";
 "Cloudy" = "Noros";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex rulează deja o comandă notify. Elimin-o mai întâi din ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Agenți de programare";
 "Color Picker" = "Selector de culori";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "Comprimă %lld articole";
 "Compress “%@”" = "Comprimă „%@”";
 "Connect" = "Conectează";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Conectează adaugă un mic hook în ~/.claude/settings.json sau ~/.codex/config.toml (o copie de rezervă e păstrată alături). Scrie doar fișiere de evenimente în dosarul propriu al Notchd.";
 "Connected" = "Conectat";
 "Convert Image To" = "Convertește imaginea în";
 "Copied" = "Copiat";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Până îl dezactivez";
 "Use My Location" = "Folosește localizarea mea";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Folosește ← → pentru a alege, Return pentru a-l folosi, Delete pentru a-l elimina, Escape pentru a închide.";
+"Uses another notify command" = "Folosește altă comandă notify";
 "Weather" = "Vremea";
 "Weather is unavailable right now." = "Vremea nu este disponibilă acum.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Când o descărcare se termină, notch-ul o arată câteva secunde: fă clic pe pictograma ei pentru a o afișa în Finder sau pe butonul Tavă pentru a o păstra la îndemână.";
@@ -476,8 +480,3 @@
 "Compact" = "Compact";
 "Roomy" = "Spațios";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Titlurile melodiilor sunt trimise la LRCLIB doar cât timp sunt afișate versurile.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Conectat. Sesiunile noi apar imediat; repornește sesiunile care erau deja deschise (Claude Code își citește hookurile la pornirea unei sesiuni).";
-"Last heard %@" = "Ultimul semnal %@";
-"Waiting for its first event" = "Se așteaptă primul eveniment";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Conectează adaugă un mic hook în ~/.claude/settings.json sau ~/.codex/config.toml (o copie de rezervă e păstrată alături). Scrie doar fișiere de evenimente în dosarul propriu al Notchd și doar cât timp Notchd rulează. O comandă notify existentă din Codex continuă să funcționeze.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Setarea notify din Codex se întinde pe mai multe rânduri. Pune-o pe un singur rând, apoi încearcă din nou.";

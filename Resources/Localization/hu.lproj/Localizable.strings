@@ -1,4 +1,5 @@
 /* notchd — hu */
+
 "Choose Shortcuts…" = "Parancsok kiválasztása…";
 "Run “%@”" = "„%@” futtatása";
 "Camera access needed" = "Kamera-hozzáférés szükséges";
@@ -298,6 +299,7 @@
 "Clipboard" = "Vágólap";
 "Clipboard history is off" = "A vágólap-előzmények ki vannak kapcsolva";
 "Cloudy" = "Felhős";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "A Codex már futtat egy notify parancsot. Előbb távolítsd el a ~/.codex/config.toml fájlból.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Kódoló ügynökök";
 "Color Picker" = "Színválasztó";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "%lld elem tömörítése";
 "Compress “%@”" = "„%@” tömörítése";
 "Connect" = "Csatlakoztatás";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "A Csatlakoztatás egy kis hookot ad a ~/.claude/settings.json vagy a ~/.codex/config.toml fájlhoz (mellette biztonsági másolat marad). Csak eseményfájlokat ír a Notchd saját mappájába.";
 "Connected" = "Csatlakoztatva";
 "Convert Image To" = "Kép konvertálása erre:";
 "Copied" = "Kimásolva";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Amíg ki nem kapcsolom";
 "Use My Location" = "Saját helyzet használata";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "A ← → billentyűkkel választhatsz, a Returnnel használhatod, a Delete-tel törölheted, az Escape-pel bezárhatod.";
+"Uses another notify command" = "Másik notify parancsot használ";
 "Weather" = "Időjárás";
 "Weather is unavailable right now." = "Az időjárás most nem érhető el.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Amikor egy letöltés befejeződik, a kivágás néhány másodpercig megmutatja: kattints az ikonjára, hogy megjelenítsd a Finderben, vagy a tálca gombra, hogy kéznél legyen.";
@@ -476,8 +480,3 @@
 "Compact" = "Kompakt";
 "Roomy" = "Tágas";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "A dalcímek csak akkor jutnak el az LRCLIB-hez, amikor a dalszöveg látható.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Csatlakoztatva. Az új munkamenetek azonnal megjelennek; a már megnyitott munkameneteket indítsd újra (a Claude Code a munkamenet indulásakor olvassa be a hookjait).";
-"Last heard %@" = "Utolsó jelzés: %@";
-"Waiting for its first event" = "Várakozás az első eseményre";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "A Csatlakoztatás egy kis hookot ad a ~/.claude/settings.json vagy a ~/.codex/config.toml fájlhoz (mellette biztonsági másolat marad). Csak eseményfájlokat ír a Notchd saját mappájába, és csak amíg a Notchd fut. A meglévő Codex notify parancs továbbra is működik.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "A Codex notify beállítása több sorra terjed ki. Írd egy sorba, majd próbáld újra.";

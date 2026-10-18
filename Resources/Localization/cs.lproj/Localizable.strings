@@ -1,4 +1,5 @@
 /* notchd — cs */
+
 "Choose Shortcuts…" = "Vybrat zkratky…";
 "Run “%@”" = "Spustit „%@“";
 "Camera access needed" = "Je potřeba přístup ke kameře";
@@ -298,6 +299,7 @@
 "Clipboard" = "Schránka";
 "Clipboard history is off" = "Historie schránky je vypnutá";
 "Cloudy" = "Oblačno";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex už spouští příkaz notify. Nejprve ho odstraňte z ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Agenti pro kódování";
 "Color Picker" = "Výběr barvy";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "Komprimovat položky (%lld)";
 "Compress “%@”" = "Komprimovat „%@“";
 "Connect" = "Připojit";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Připojit přidá malý hook do ~/.claude/settings.json nebo ~/.codex/config.toml (vedle zůstane záloha). Zapisuje jen soubory událostí do vlastní složky Notchd.";
 "Connected" = "Připojeno";
 "Convert Image To" = "Převést obrázek na";
 "Copied" = "Zkopírováno";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Dokud to nevypnu";
 "Use My Location" = "Použít mou polohu";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "← → vybírá, Return použije, Delete odstraní, Escape zavře.";
+"Uses another notify command" = "Používá jiný příkaz notify";
 "Weather" = "Počasí";
 "Weather is unavailable right now." = "Počasí teď není k dispozici.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Po dokončení stahování ho výřez na pár sekund zobrazí: kliknutím na ikonu ho zobrazíte ve Finderu, tlačítkem přihrádky ho budete mít po ruce.";
@@ -476,8 +480,3 @@
 "Compact" = "Kompaktní";
 "Roomy" = "Prostorný";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Názvy skladeb se do LRCLIB odesílají jen při zobrazení textů.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Připojeno. Nové relace se zobrazí hned; relace, které už byly otevřené, restartujte (Claude Code načítá své hooky při spuštění relace).";
-"Last heard %@" = "Poslední signál %@";
-"Waiting for its first event" = "Čeká se na první událost";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Připojit přidá malý hook do ~/.claude/settings.json nebo ~/.codex/config.toml (vedle zůstane záloha). Zapisuje jen soubory událostí do vlastní složky Notchd, a to jen když Notchd běží. Stávající příkaz notify v Codexu bude fungovat dál.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Nastavení notify v Codexu zabírá více řádků. Dejte ho na jeden řádek a zkuste to znovu.";

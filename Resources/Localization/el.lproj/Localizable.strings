@@ -1,4 +1,5 @@
 /* notchd — el */
+
 "Choose Shortcuts…" = "Επιλογή συντομεύσεων…";
 "Run “%@”" = "Εκτέλεση «%@»";
 "Camera access needed" = "Απαιτείται πρόσβαση στην κάμερα";
@@ -298,6 +299,7 @@
 "Clipboard" = "Πρόχειρο";
 "Clipboard history is off" = "Το ιστορικό προχείρου είναι ανενεργό";
 "Cloudy" = "Νεφελώδης";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Το Codex εκτελεί ήδη μια εντολή notify. Αφαιρέστε την πρώτα από το ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Πράκτορες κώδικα";
 "Color Picker" = "Επιλογέας χρωμάτων";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "Συμπίεση %lld στοιχείων";
 "Compress “%@”" = "Συμπίεση «%@»";
 "Connect" = "Σύνδεση";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Η Σύνδεση προσθέτει ένα μικρό hook στο ~/.claude/settings.json ή στο ~/.codex/config.toml (κρατιέται αντίγραφο ασφαλείας δίπλα του). Γράφει αρχεία συμβάντων μόνο στον δικό φάκελο του Notchd.";
 "Connected" = "Συνδέθηκε";
 "Convert Image To" = "Μετατροπή εικόνας σε";
 "Copied" = "Αντιγράφηκε";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Μέχρι να το απενεργοποιήσω";
 "Use My Location" = "Χρήση της τοποθεσίας μου";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Χρησιμοποιήστε ← → για επιλογή, Return για χρήση, Delete για αφαίρεση και Escape για κλείσιμο.";
+"Uses another notify command" = "Χρησιμοποιεί άλλη εντολή notify";
 "Weather" = "Καιρός";
 "Weather is unavailable right now." = "Ο καιρός δεν είναι διαθέσιμος αυτήν τη στιγμή.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Όταν ολοκληρώνεται μια λήψη, η εγκοπή την εμφανίζει για λίγα δευτερόλεπτα: κάντε κλικ στο εικονίδιό της για να εμφανιστεί στο Finder ή στο κουμπί της θήκης για να την έχετε πρόχειρη.";
@@ -476,8 +480,3 @@
 "Compact" = "Συμπαγές";
 "Roomy" = "Ευρύχωρο";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Οι τίτλοι τραγουδιών στέλνονται στο LRCLIB μόνο όσο εμφανίζονται οι στίχοι.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Συνδέθηκε. Οι νέες συνεδρίες εμφανίζονται αμέσως· επανεκκινήστε όσες ήταν ήδη ανοιχτές (το Claude Code διαβάζει τα hooks του όταν ξεκινά μια συνεδρία).";
-"Last heard %@" = "Τελευταίο σήμα %@";
-"Waiting for its first event" = "Αναμονή για το πρώτο συμβάν";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Η Σύνδεση προσθέτει ένα μικρό hook στο ~/.claude/settings.json ή στο ~/.codex/config.toml (κρατιέται αντίγραφο ασφαλείας δίπλα του). Γράφει αρχεία συμβάντων μόνο στον δικό φάκελο του Notchd και μόνο όσο εκτελείται το Notchd. Μια υπάρχουσα εντολή notify του Codex συνεχίζει να λειτουργεί.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Η ρύθμιση notify του Codex εκτείνεται σε πολλές γραμμές. Βάλτε τη σε μία γραμμή και δοκιμάστε ξανά.";

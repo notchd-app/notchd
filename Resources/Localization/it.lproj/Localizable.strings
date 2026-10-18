@@ -1,4 +1,5 @@
 /* notchd — it */
+
 "Choose Shortcuts…" = "Scegli comandi rapidi…";
 "Run “%@”" = "Esegui “%@”";
 "Camera access needed" = "Serve l’accesso alla fotocamera";
@@ -298,6 +299,7 @@
 "Clipboard" = "Appunti";
 "Clipboard history is off" = "La cronologia degli appunti è disattivata";
 "Cloudy" = "Nuvoloso";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex esegue già un comando notify. Rimuovilo prima da ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Agenti di programmazione";
 "Color Picker" = "Selettore colore";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "Comprimi %lld elementi";
 "Compress “%@”" = "Comprimi “%@”";
 "Connect" = "Collega";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Collega aggiunge un piccolo hook a ~/.claude/settings.json o ~/.codex/config.toml (accanto viene conservato un backup). Scrive solo file di eventi nella cartella di Notchd.";
 "Connected" = "Collegato";
 "Convert Image To" = "Converti immagine in";
 "Copied" = "Copiato";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Finché non lo disattivo";
 "Use My Location" = "Usa la mia posizione";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Usa ← → per scegliere, A capo per usarlo, Elimina per rimuoverlo, Esc per chiudere.";
+"Uses another notify command" = "Usa un altro comando notify";
 "Weather" = "Meteo";
 "Weather is unavailable right now." = "Il meteo non è disponibile al momento.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Al termine di un download, il notch lo mostra per qualche secondo: fai clic sull’icona per mostrarlo nel Finder o sul pulsante del vassoio per tenerlo a portata di mano.";
@@ -476,8 +480,3 @@
 "Compact" = "Compatto";
 "Roomy" = "Spazioso";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "I titoli dei brani vengono inviati a LRCLIB solo mentre i testi sono visibili.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Collegato. Le nuove sessioni compaiono subito; riavvia quelle già aperte (Claude Code legge i suoi hook all’avvio di una sessione).";
-"Last heard %@" = "Ultimo segnale %@";
-"Waiting for its first event" = "In attesa del primo evento";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Collega aggiunge un piccolo hook a ~/.claude/settings.json o ~/.codex/config.toml (accanto viene conservato un backup). Scrive solo file di eventi nella cartella di Notchd, e solo mentre Notchd è in esecuzione. Un comando notify di Codex già presente continua a funzionare.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "L’impostazione notify di Codex occupa più righe. Mettila su una sola riga e riprova.";

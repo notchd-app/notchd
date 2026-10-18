@@ -254,54 +254,32 @@ private func temporary(_ name: String) -> URL {
     #expect(Array(hooks.keys) == ["Stop"])
     #expect(hooks["Stop"]?.count == 1)
 
-    // Codex without a notify: ours goes above the first table, and comes out cleanly.
+    // Codex: notify goes above the first table, and only when there's no notify already.
     let codex = folder.appendingPathComponent("config.toml")
-    let plain = "model = \"o3\"\n\n[profiles.fast]\nnotify = [\"x\"]\n"
-    try Data(plain.utf8).write(to: codex)
-    #expect(!AgentHooks.hasTopLevelNotify(plain))
+    try Data("model = \"o3\"\n\n[profiles.fast]\nnotify = [\"x\"]\n".utf8).write(to: codex)
+    #expect(!AgentHooks.hasTopLevelNotify(try String(contentsOf: codex, encoding: .utf8)))
     try AgentHooks.connectCodex(at: codex)
     let connected = try String(contentsOf: codex, encoding: .utf8)
     #expect(connected.hasPrefix("notify = ['sh', '-c', "))
     #expect(AgentHooks.hasTopLevelNotify(connected))
     try AgentHooks.disconnectCodex(at: codex)
-    #expect(try String(contentsOf: codex, encoding: .utf8) == plain)
+    #expect(try String(contentsOf: codex, encoding: .utf8) == "model = \"o3\"\n\n[profiles.fast]\nnotify = [\"x\"]\n")
 
-    // Codex with its own notify (Computer Use, terminal-notifier…): wrapped, kept, and restored exactly.
-    let existing = "notify = [\"/Apps/Helper\", \"turn-ended\"]\nmodel = \"o3\"\n\n[projects.\"/x\"]\ntrust_level = \"trusted\"\n"
-    try Data(existing.utf8).write(to: codex)
-    try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: codex.path)
-    try AgentHooks.connectCodex(at: codex)
-    let wrapped = try String(contentsOf: codex, encoding: .utf8)
-    #expect(wrapped.contains("'notchd', \"/Apps/Helper\", \"turn-ended\"]  # added by Notchd"))
-    #expect(wrapped.components(separatedBy: "\n").filter { $0.hasPrefix("notify") }.count == 1)
-    #expect((try FileManager.default.attributesOfItem(atPath: codex.path)[.posixPermissions] as? Int) == 0o600)
-    try AgentHooks.disconnectCodex(at: codex)
-    #expect(try String(contentsOf: codex, encoding: .utf8) == existing)
-
-    try Data("notify = [\n  \"a\",\n]\n".utf8).write(to: codex)
+    try Data("notify = [\"terminal-notifier\"]\n".utf8).write(to: codex)
     #expect(throws: AgentHooks.AgentError.self) { try AgentHooks.connectCodex(at: codex) }
 }
 
 @Test func agentHookCommandsWriteTheEventFile() throws {
     let home = temporary("home")
-    let bin = home.appendingPathComponent("bin")
-    try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: home) }
-    // Stand-ins: `pgrep` answers "Notchd is running" (or not), the old notify command records its arguments.
-    func script(_ name: String, _ body: String) throws {
-        let url = bin.appendingPathComponent(name)
-        try Data("#!/bin/sh\n\(body)\n".utf8).write(to: url)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
-    }
-    try script("pgrep", "exit ${PGREP_EXIT:-0}")
-    try script("old-notify", "printf '%s|' \"$@\" > \"$HOME/old-notify.txt\"")
     let spool = home.appendingPathComponent("Library/Application Support/Notchd/Agents")
-
-    func run(_ command: String, _ args: [String], stdin: String = "", running: Bool = true) throws {
+    for (command, args, stdin) in [(AgentHooks.claudeCommand, [String](), #"{"hook_event_name":"Stop"}"#),
+                                   (AgentHooks.codexCommand, ["notchd", #"{"type":"agent-turn-complete"}"#], "")] {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/sh")
         process.arguments = ["-c", command] + args
-        process.environment = ["HOME": home.path, "PATH": "\(bin.path):/usr/bin:/bin", "PGREP_EXIT": running ? "0" : "1"]
+        process.environment = ["HOME": home.path, "PATH": "/usr/bin:/bin"]
         let input = Pipe()
         process.standardInput = input
         try process.run()
@@ -310,62 +288,9 @@ private func temporary(_ name: String) -> URL {
         process.waitUntilExit()
         #expect(process.terminationStatus == 0)
     }
-    let event = #"{"type":"agent-turn-complete"}"#
-    try run(AgentHooks.claudeCommand, [], stdin: #"{"hook_event_name":"Stop"}"#)
-    try run(AgentHooks.codexCommand, ["notchd", event])
-    // Wrapped: the original notify still runs, with exactly the arguments Codex gave it.
-    try run(AgentHooks.codexCommand, ["notchd", bin.appendingPathComponent("old-notify").path, "turn-ended", event])
     let files = try FileManager.default.contentsOfDirectory(atPath: spool.path)
-    #expect(files.filter { $0.hasSuffix(".json") }.count == 3)
+    #expect(files.filter { $0.hasSuffix(".json") }.count == 2)
     #expect(!files.contains { $0.hasPrefix(".") })  // temp files were renamed into place
-    #expect(try String(contentsOf: home.appendingPathComponent("old-notify.txt"), encoding: .utf8) == "turn-ended|\(event)|")
-
-    // Notchd not running: nothing piles up, and the original notify still runs.
-    try FileManager.default.removeItem(at: spool)
-    try run(AgentHooks.claudeCommand, [], stdin: "{}", running: false)
-    try run(AgentHooks.codexCommand, ["notchd", bin.appendingPathComponent("old-notify").path, event], running: false)
-    #expect(!FileManager.default.fileExists(atPath: spool.path))
-    #expect(try String(contentsOf: home.appendingPathComponent("old-notify.txt"), encoding: .utf8) == "\(event)|")
-}
-
-@Test func agentEventsDriveTheActivity() throws {
-    let monitor = AgentMonitor()
-    monitor.handle(["hook_event_name": "UserPromptSubmit", "session_id": "a", "cwd": "/x/notchd"])
-    #expect(monitor.active.map(\.state) == [.working])
-    #expect(monitor.active.first?.project == "notchd")
-    #expect(monitor.lastHeard[.claude] != nil)
-
-    // "Waiting for your input" after a finished turn isn't a question; a permission prompt is.
-    monitor.handle(["hook_event_name": "Notification", "session_id": "a", "notification_type": "idle_prompt",
-                    "message": "Claude is waiting for your input"])
-    #expect(monitor.active.first?.state == .working)
-    monitor.handle(["hook_event_name": "Notification", "session_id": "a",
-                    "message": "Claude needs your permission to use Bash"])
-    #expect(monitor.active.first?.state == .waiting)
-    monitor.handle(["hook_event_name": "PostToolUse", "session_id": "a"])
-    #expect(monitor.active.first?.state == .working)
-
-    monitor.handle(["hook_event_name": "Stop", "session_id": "a"])
-    #expect(monitor.active.isEmpty)
-    // A tool event for a session that isn't running a turn doesn't bring it back.
-    monitor.handle(["hook_event_name": "PostToolUse", "session_id": "a"])
-    #expect(monitor.active.isEmpty)
-    // A failed request ends the turn too.
-    monitor.handle(["hook_event_name": "UserPromptSubmit", "session_id": "b"])
-    monitor.handle(["hook_event_name": "StopFailure", "session_id": "b"])
-    #expect(monitor.active.isEmpty)
-}
-
-@Test func agentInterruptionsAreReadFromTheTranscript() throws {
-    let transcript = temporary("transcript")
-    defer { try? FileManager.default.removeItem(at: transcript) }
-    try Data((#"{"type":"assistant","message":{"content":"working on it"}}"# + "\n").utf8).write(to: transcript)
-    #expect(!AgentMonitor.interrupted(transcript))
-    let handle = try FileHandle(forWritingTo: transcript)
-    try handle.seekToEnd()
-    handle.write(Data((#"{"type":"user","message":{"content":[{"type":"text","text":"[Request interrupted by user]"}]}}"# + "\n").utf8))
-    try handle.close()
-    #expect(AgentMonitor.interrupted(transcript))
 }
 
 // MARK: - Small helpers

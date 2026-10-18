@@ -1,4 +1,5 @@
 /* notchd — ja */
+
 "Choose Shortcuts…" = "ショートカットを選択…";
 "Run “%@”" = "「%@」を実行";
 "Camera access needed" = "カメラへのアクセスが必要です";
@@ -298,6 +299,7 @@
 "Clipboard" = "クリップボード";
 "Clipboard history is off" = "クリップボード履歴はオフです";
 "Cloudy" = "曇り";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codexはすでに別のnotifyコマンドを実行しています。まず~/.codex/config.tomlから削除してください。";
 "Codex:" = "Codex：";
 "Coding Agents" = "コーディングエージェント";
 "Color Picker" = "カラーピッカー";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "%lld項目を圧縮";
 "Compress “%@”" = "“%@”を圧縮";
 "Connect" = "接続";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "「接続」を押すと、~/.claude/settings.jsonまたは~/.codex/config.tomlに小さなフックを追加します（バックアップが同じ場所に保存されます）。書き込むのはNotchd専用フォルダ内のイベントファイルのみです。";
 "Connected" = "接続済み";
 "Convert Image To" = "イメージを変換";
 "Copied" = "コピーしました";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "オフにするまで";
 "Use My Location" = "現在地を使用";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "← →で選択、Returnで使用、Deleteで削除、Escで閉じます。";
+"Uses another notify command" = "別のnotifyコマンドを使用中";
 "Weather" = "天気";
 "Weather is unavailable right now." = "現在、天気を取得できません。";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "ダウンロードが完了すると、ノッチに数秒間表示されます。アイコンをクリックするとFinderに表示し、トレイボタンをクリックすると手元に保持できます。";
@@ -476,8 +480,3 @@
 "Compact" = "コンパクト";
 "Roomy" = "ゆったり";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "歌詞を表示しているときだけ、曲名が LRCLIB に送信されます。";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "接続しました。新しいセッションはすぐに表示されます。すでに開いているセッションは再起動してください（Claude Codeはセッション開始時にフックを読み込みます）。";
-"Last heard %@" = "最終受信：%@";
-"Waiting for its first event" = "最初のイベントを待っています";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "「接続」を押すと、~/.claude/settings.jsonまたは~/.codex/config.tomlに小さなフックを追加します（バックアップが同じ場所に保存されます）。書き込むのはNotchd専用フォルダ内のイベントファイルのみで、Notchdの実行中に限られます。既存のCodexのnotifyコマンドはそのまま動作します。";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codexのnotify設定が複数行にわたっています。1行にまとめてから、もう一度お試しください。";

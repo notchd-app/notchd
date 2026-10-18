@@ -123,50 +123,29 @@ Everything you copy appears in the notch's **Clipboard** tab: text, links, image
 ## Install
 
 ### Download
-1. Download `Notchd-x.y.z.zip` from the [latest release](https://github.com/notchd-app/notchd/releases/latest). It's a universal app (Apple Silicon and Intel) for macOS 14 Sonoma or later.
-2. Double-click the zip if your browser didn't unzip it, then drag **Notchd.app** into **Applications**.
-3. notchd isn't notarized yet, so macOS blocks it the first time ("can't be opened" or "is damaged"). Unblock it once, either way:
-   - **Terminal:** paste this and press Return (it works from any folder):
-     ```sh
-     xattr -dr com.apple.quarantine /Applications/Notchd.app
-     ```
-   - **System Settings:** try to open notchd, click **Done**, then go to **System Settings › Privacy & Security**, scroll down and click **Open Anyway** next to the notchd message. (On macOS 15 and later, right-click › Open no longer does this.)
-4. Open notchd from Applications. It has no Dock icon: the notch waves hello, and you right-click the notch for Settings.
+Grab the latest `Notchd-x.y.z.zip` from [Releases](https://github.com/notchd-app/notchd/releases), or a build of the latest commit from [Actions](https://github.com/notchd-app/notchd/actions/workflows/build.yml) (open a run, then *Artifacts*). It's a universal app: Apple Silicon and Intel, macOS 14 or later.
 
-After that, notchd keeps itself up to date: it checks GitHub Releases in the background (Settings › About › *Check automatically*) and shows a **New Update** activity when there's one.
+After that, notchd keeps itself up to date: it checks GitHub Releases in the background (Settings → About → *Check automatically*) and shows a **New Update** activity when there's one.
 
-Want the very latest commit instead of the latest release? Open a run of the [Build workflow](https://github.com/notchd-app/notchd/actions/workflows/build.yml) and download the zip under *Artifacts* (you need to be signed in to GitHub). Then follow steps 2–4.
-
-### Build from source
-It takes a few minutes the first time and about a minute after that.
-
-**Requirements:** macOS 14 Sonoma or later, Xcode or the Command Line Tools, and `cmake` (used once, to build the Now Playing helper).
+notchd isn't notarized yet, so macOS will refuse to open it the first time. After unzipping, run this once:
 
 ```sh
-xcode-select --install   # skip if you have Xcode or already did this
-brew install cmake       # needs Homebrew: https://brew.sh (or: pip3 install cmake)
+xattr -dr com.apple.quarantine Notchd.app
 ```
 
-Then build it and install it over any copy you already have:
+### Build from source
+It takes about a minute.
+
+**Requirements:** macOS 14 Sonoma or later, Xcode or the Command Line Tools (`xcode-select --install`), and `cmake` for the media helper (`brew install cmake`).
 
 ```sh
 git clone https://github.com/notchd-app/notchd.git
 cd notchd
 ./scripts/bundle.sh
-pkill -x Notchd; ditto build/Notchd.app /Applications/Notchd.app && open /Applications/Notchd.app
+open build/Notchd.app
 ```
 
-To update later, run `git pull` and the last two commands again. If you have an Apple Development certificate, `bundle.sh` signs with it so macOS remembers your permissions across rebuilds; otherwise it signs ad hoc, and macOS may ask for permissions again after each rebuild.
-
-### Troubleshooting
-| Problem | Fix |
-|---|---|
-| "Notchd can't be opened" or "Notchd is damaged" | Step 3 above. Use the full path `/Applications/Notchd.app`, or the folder you put it in. |
-| `xattr: No such file: Notchd.app` | The command needs the app's full path: `xattr -dr com.apple.quarantine /Applications/Notchd.app`. |
-| `cmake: command not found` while building | `brew install cmake` (or `pip3 install cmake`), then run `./scripts/bundle.sh` again. |
-| An older version keeps coming back | Another copy of Notchd.app is still on your Mac (often an old one in Downloads or in the clone's `build` folder) and opens at login. Each copy quits the others when it starts. Keep only `/Applications/Notchd.app` and delete the rest. |
-| Nothing shows in the notch | notchd runs without a Dock icon. Check it's running: `pgrep -l Notchd`. Then hover or click the notch, or right-click it for Settings. |
-| Permissions asked again after an update | Builds signed ad hoc (from source without a certificate) change identity on every build. Release builds keep their signature, so this only happens once. |
+Move `build/Notchd.app` to `/Applications` to keep it. If you have an Apple Development certificate, `bundle.sh` signs with it so macOS remembers your permissions across rebuilds; otherwise it signs ad hoc.
 
 ### Permissions
 notchd only asks for what a feature needs, the first time it needs it:
@@ -190,15 +169,11 @@ Release builds are signed with a free self-signed certificate. It doesn't silenc
 
 Maintainers set it up once:
 
-1. In **Keychain Access › Certificate Assistant › Create a Certificate…**, name it `notchd`, set *Identity Type* to **Self-Signed Root** and *Certificate Type* to **Code Signing**.
-2. Export it with its private key as `notchd.p12` (right-click the certificate › Export), choosing a password.
-3. Add both as repository secrets for the Build workflow:
-   ```sh
-   base64 -i notchd.p12 | gh secret set MACOS_CERT_P12 --repo notchd-app/notchd
-   gh secret set MACOS_CERT_PASSWORD --repo notchd-app/notchd   # paste the export password
-   ```
+```sh
+./scripts/make-signing-cert.sh --upload   # creates ~/.notchd-signing and the GitHub secrets
+```
 
-Keep `notchd.p12` and its password somewhere safe: a new certificate means everyone re-grants permissions once, and installed copies won't auto-update across the switch. Without the secrets, CI falls back to ad-hoc signing.
+Back up `~/.notchd-signing`: a new certificate means everyone re-grants permissions once, and installed copies won't auto-update across the switch. Without the secrets, CI falls back to ad-hoc signing.
 
 ## Gestures cheat sheet
 

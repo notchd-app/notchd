@@ -78,6 +78,15 @@ final class NotchController {
             panel.ignoresMouseEvents = false
             panel.makeKey()
         })
+        // Losing the keyboard to another window also ends typing in a task, timer or note field.
+        observers.append(NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: panel,
+                                                                queue: .main) { [weak self] _ in
+            guard let self else { return }
+            let mouse = NSEvent.mouseLocation
+            guard !hitRect.contains(mouse) else { return }
+            endTyping()
+            updateHover(mouse)
+        })
         // Clicking another app dismisses the history opened with ⇧⌘V (it's pinned open until then).
         observers.append(NotificationCenter.default.addObserver(forName: NSWindow.didResignKeyNotification, object: panel,
                                                                 queue: .main) { [weak self] _ in
@@ -100,9 +109,6 @@ final class NotchController {
     /// Renders the notch window's top-centre into a PNG, for checking layouts during development.
     func snapshot(to path: String) {
         guard let view = panel.contentView else { return }
-        // Animations stall while the display sleeps, so also note what the notch is showing.
-        try? String(describing: ActivityCenter.shared.current(for: model))
-            .write(toFile: path + ".txt", atomically: true, encoding: .utf8)
         let size = model.isOpen ? model.openSize : model.size(activity: ActivityCenter.shared.current(for: model))
         let top = view.isFlipped ? view.bounds.minY : view.bounds.maxY - size.height - 20
         let rect = NSRect(x: view.bounds.midX - size.width / 2 - 40, y: top, width: size.width + 80, height: size.height + 20)
@@ -141,6 +147,9 @@ final class NotchController {
         switch event.type {
         case .leftMouseDown:
             dragChangeCount = NSPasteboard(name: .drag).changeCount
+            // Clicking anywhere outside the notch (another app, another screen) ends typing,
+            // so "Don't close while typing" doesn't pin it open after you've moved on.
+            if event.window !== panel, !hitRect.contains(mouse) { endTyping() }
         case .leftMouseDragged:
             detectFileDrag(at: mouse)
             collapseDropZonesIfLeft(at: mouse)
@@ -183,6 +192,13 @@ final class NotchController {
             closeWork = work
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15, execute: work)
         }
+    }
+
+    /// Drops keyboard focus from the notch's text fields; their focus handlers then clear `model.typing`.
+    private func endTyping() {
+        guard model.typing else { return }
+        panel.makeFirstResponder(nil)
+        model.typing = false
     }
 
     /// Give the drop a moment to land before closing.

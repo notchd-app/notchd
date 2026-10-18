@@ -563,9 +563,7 @@ private extension LiveActivitiesPane {
 
 private struct CustomizeActivities: View {
     @Bindable private var settings = Settings.shared
-    // Dev: `-debugActivity agent` opens with that activity selected.
-    @Local private var selection: ActivityKind? = UserDefaults.standard.string(forKey: "debugActivity")
-        .flatMap(ActivityKind.init(rawValue:)) ?? Settings.shared.prefs.activities.first?.kind
+    @Local private var selection: ActivityKind? = Settings.shared.prefs.activities.first?.kind
 
     var body: some View {
         HStack(alignment: .top, spacing: 20) {
@@ -964,66 +962,43 @@ private struct AgentActivityOptions: View {
     @Local private var claude = AgentHooks.claudeStatus
     @Local private var codex = AgentHooks.codexStatus
     @Local private var error: String?
-    @Local private var justConnected = false
-    private var monitor = AgentMonitor.shared
 
     var body: some View {
         Form {
             Caption("See when Claude Code or Codex is working, needs your input, or has finished, without watching the terminal. Click the activity to jump back to it.")
-            row("Claude Code:", tool: .claude, status: claude, connect: AgentHooks.connectClaude,
-                disconnect: AgentHooks.disconnectClaude)
-            row("Codex:", tool: .codex, status: codex, connect: AgentHooks.connectCodex, disconnect: AgentHooks.disconnectCodex)
-            if justConnected {
-                Caption("Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts).")
-                    .foregroundStyle(.green)
-            }
+            row("Claude Code:", status: claude, connect: AgentHooks.connectClaude, disconnect: AgentHooks.disconnectClaude)
+            row("Codex:", status: codex, connect: AgentHooks.connectCodex, disconnect: AgentHooks.disconnectCodex)
             Toggle("Chime when an agent finishes", isOn: $settings.prefs.agentSound)
             if let error { Text(error).font(.callout).foregroundStyle(.orange) }
-            Caption("Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working.")
-        }
-        .onAppear {
-            claude = AgentHooks.claudeStatus
-            codex = AgentHooks.codexStatus
+            Caption("Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder.")
         }
     }
 
-    private func row(_ title: LocalizedStringKey, tool: AgentTool, status: AgentHooks.Status,
-                     connect: @escaping () throws -> Void, disconnect: @escaping () throws -> Void) -> some View {
+    private func row(_ title: LocalizedStringKey, status: AgentHooks.Status, connect: @escaping () throws -> Void,
+                     disconnect: @escaping () throws -> Void) -> some View {
         LabeledContent(title) {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    switch status {
-                    case .unavailable:
-                        Text("Not installed").foregroundStyle(.secondary)
-                    case .connected:
-                        Label("Connected", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
-                        Button("Disconnect") { run(disconnect) }
-                    case .notInstalled:
-                        Button("Connect") { run(connect, connecting: true) }
-                    }
-                }
-                if status == .connected {
-                    Group {
-                        if let heard = monitor.lastHeard[tool] {
-                            Text("Last heard \(heard.formatted(.relative(presentation: .named)))")
-                        } else {
-                            Text("Waiting for its first event")
-                        }
-                    }
-                    .font(.caption).foregroundStyle(.secondary)
+            HStack {
+                switch status {
+                case .unavailable:
+                    Text("Not installed").foregroundStyle(.secondary)
+                case .connected:
+                    Label("Connected", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                    Button("Disconnect") { run(disconnect) }
+                case .connectedDifferently:
+                    Text("Uses another notify command").foregroundStyle(.secondary)
+                case .notInstalled:
+                    Button("Connect") { run(connect) }
                 }
             }
         }
     }
 
-    private func run(_ action: () throws -> Void, connecting: Bool = false) {
+    private func run(_ action: () throws -> Void) {
         do {
             try action()
             error = nil
-            justConnected = connecting
         } catch {
             self.error = error.localizedDescription
-            justConnected = false
         }
         claude = AgentHooks.claudeStatus
         codex = AgentHooks.codexStatus

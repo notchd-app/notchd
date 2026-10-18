@@ -1,4 +1,5 @@
 /* notchd — zh-Hant */
+
 "Choose Shortcuts…" = "選擇捷徑…";
 "Run “%@”" = "執行「%@」";
 "Camera access needed" = "需要相機取用權限";
@@ -298,6 +299,7 @@
 "Clipboard" = "剪貼板";
 "Clipboard history is off" = "剪貼板記錄已關閉";
 "Cloudy" = "多雲";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex 已在執行 notify 指令。請先從 ~/.codex/config.toml 中移除它。";
 "Codex:" = "Codex：";
 "Coding Agents" = "程式碼代理程式";
 "Color Picker" = "顏色選擇器";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "壓縮 %lld 個項目";
 "Compress “%@”" = "壓縮「%@」";
 "Connect" = "連接";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "「連接」會在 ~/.claude/settings.json 或 ~/.codex/config.toml 中加入一個小型掛鉤（並在旁邊保留備份）。它只會將事件檔案寫入 Notchd 自己的檔案夾。";
 "Connected" = "已連接";
 "Convert Image To" = "將影像轉換為";
 "Copied" = "已拷貝";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "直到我將其關閉";
 "Use My Location" = "使用我的位置";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "使用 ← → 選擇，按 Return 使用，按 Delete 移除，按 Esc 關閉。";
+"Uses another notify command" = "正在使用其他 notify 指令";
 "Weather" = "天氣";
 "Weather is unavailable right now." = "目前無法取得天氣資訊。";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "下載完成時，瀏海會顯示幾秒鐘：按一下其圖像可在 Finder 中顯示，或按一下托盤按鈕將其留在手邊。";
@@ -476,8 +480,3 @@
 "Compact" = "緊湊";
 "Roomy" = "寬鬆";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "僅在顯示歌詞時，歌曲名稱才會傳送到 LRCLIB。";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "已連接。新工作階段會立即顯示；已開啟的工作階段請重新啟動（Claude Code 會在工作階段開始時讀取其掛鉤）。";
-"Last heard %@" = "上次收到：%@";
-"Waiting for its first event" = "正在等待第一個事件";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "「連接」會在 ~/.claude/settings.json 或 ~/.codex/config.toml 中加入一個小型掛鉤（並在旁邊保留備份）。它只會在 Notchd 執行時將事件檔案寫入 Notchd 自己的檔案夾。現有的 Codex notify 指令仍可正常運作。";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex 的 notify 設定跨越了多行。請將其改為一行，然後再試一次。";

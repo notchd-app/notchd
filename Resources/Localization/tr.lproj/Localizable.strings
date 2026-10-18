@@ -1,4 +1,5 @@
 /* notchd — tr */
+
 "Choose Shortcuts…" = "Kestirmeleri Seç…";
 "Run “%@”" = "“%@” Kestirmesini Çalıştır";
 "Camera access needed" = "Kamera erişimi gerekiyor";
@@ -298,6 +299,7 @@
 "Clipboard" = "Pano";
 "Clipboard history is off" = "Pano geçmişi kapalı";
 "Cloudy" = "Bulutlu";
+"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex zaten bir notify komutu çalıştırıyor. Önce onu ~/.codex/config.toml dosyasından kaldırın.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Kodlama Aracıları";
 "Color Picker" = "Renk Seçici";
@@ -308,6 +310,7 @@
 "Compress %lld Items" = "%lld Öğeyi Sıkıştır";
 "Compress “%@”" = "“%@” Öğesini Sıkıştır";
 "Connect" = "Bağlan";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Bağlan, ~/.claude/settings.json veya ~/.codex/config.toml dosyasına küçük bir kanca ekler (yanında bir yedek tutulur). Yalnızca Notchd’nin kendi klasörüne olay dosyaları yazar.";
 "Connected" = "Bağlı";
 "Convert Image To" = "Görüntüyü Dönüştür";
 "Copied" = "Kopyalandı";
@@ -455,6 +458,7 @@
 "Until I turn it off" = "Ben kapatana kadar";
 "Use My Location" = "Konumumu Kullan";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Seçmek için ← →, kullanmak için Return, silmek için Delete, kapatmak için Escape tuşunu kullanın.";
+"Uses another notify command" = "Başka bir notify komutu kullanıyor";
 "Weather" = "Hava Durumu";
 "Weather is unavailable right now." = "Hava durumu şu anda kullanılamıyor.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Bir indirme bittiğinde çentik onu birkaç saniye gösterir: Finder’da göstermek için simgesine, el altında tutmak için tepsi düğmesine tıklayın.";
@@ -476,8 +480,3 @@
 "Compact" = "Sıkı";
 "Roomy" = "Geniş";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Şarkı adları LRCLIB'e yalnızca sözler gösterilirken gönderilir.";
-"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Bağlı. Yeni oturumlar hemen görünür; zaten açık olan oturumları yeniden başlatın (Claude Code kancalarını oturum başladığında okur).";
-"Last heard %@" = "Son sinyal: %@";
-"Waiting for its first event" = "İlk olay bekleniyor";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Bağlan, ~/.claude/settings.json veya ~/.codex/config.toml dosyasına küçük bir kanca ekler (yanında bir yedek tutulur). Yalnızca Notchd çalışırken ve yalnızca Notchd’nin kendi klasörüne olay dosyaları yazar. Mevcut bir Codex notify komutu çalışmaya devam eder.";
-"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex’in notify ayarı birden fazla satıra yayılıyor. Tek satıra alıp yeniden deneyin.";
