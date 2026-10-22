@@ -23,3 +23,24 @@ import Testing
     #expect(!NotchController.scrollTargetsNotch(window: panel, panel: panel, location: .zero, hitRect: hitRect))
     #expect(!NotchController.scrollTargetsNotch(window: panel, panel: panel, location: overNotch, hitRect: .zero))
 }
+
+@Test @MainActor func leavingATabEndsTyping() {
+    _ = NSApplication.shared
+    guard let screen = NSScreen.screens.first else { return }  // no display to build a notch for
+    let model = NotchModel(screen: screen)
+
+    // Switching tabs removes the focused field without its focus handler running,
+    // so "Stay open when the pointer leaves" would pin the notch and the Tray would ignore its keys.
+    model.typing = true
+    model.tab = .tray
+    #expect(!model.typing)
+
+    model.typing = true
+    model.tab = .tray
+    #expect(model.typing)
+
+    model.tab = .nook
+    model.typing = true
+    model.dropping = true
+    #expect(!model.typing)
+}

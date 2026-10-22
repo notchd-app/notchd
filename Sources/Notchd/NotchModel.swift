@@ -35,9 +35,14 @@ final class NotchModel {
     enum DropTarget { case tray, airDrop }
 
     var state: State = .closed
-    var tab: Tab = .nook
+    var tab: Tab = .nook {
+        // The field being typed in leaves with its tab, before its focus handler can clear `typing`.
+        didSet { if tab != oldValue { typing = false } }
+    }
     var hovering = false
-    var dropping = false   // a file drag is happening over the notch
+    var dropping = false {   // a file drag is happening over the notch
+        didSet { if dropping { typing = false } }   // its drop zones replace the fields, too
+    }
     var dropTarget: DropTarget?   // the drop zone under that drag
     var arrangingWidgets = false
     var locked = false
