@@ -304,7 +304,13 @@ final class NotchController {
     /// Scrolling a list or a timer wheel in the open notch must not close it.
     private func isOverScrollView(_ event: NSEvent) -> Bool {
         guard model.isOpen, let content = panel.contentView else { return false }
-        var view = content.hitTest(content.convert(event.locationInWindow, from: nil))
+        return Self.scrollViewContains(event.locationInWindow, in: content)
+    }
+
+    /// `hitTest` takes a point in the superview's coordinates. The hosting view is flipped, so a point
+    /// in its own coordinates came out upside down and missed the Tray and Clipboard rows.
+    static func scrollViewContains(_ locationInWindow: NSPoint, in content: NSView) -> Bool {
+        var view = content.hitTest(content.superview?.convert(locationInWindow, from: nil) ?? locationInWindow)
         while let current = view {
             if current is NSScrollView { return true }
             view = current.superview
