@@ -1,5 +1,4 @@
 /* notchd — ar */
-
 "Choose Shortcuts…" = "اختيار الاختصارات…";
 "Run “%@”" = "تشغيل \"%@\"";
 "Camera access needed" = "يلزم الوصول إلى الكاميرا";
@@ -299,7 +298,6 @@
 "Clipboard" = "الحافظة";
 "Clipboard history is off" = "سجل الحافظة متوقف";
 "Cloudy" = "غائم";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "يشغّل Codex بالفعل أمر notify. أزله من ~/.codex/config.toml أولًا.";
 "Codex:" = "Codex:";
 "Coding Agents" = "وكلاء البرمجة";
 "Color Picker" = "منتقي الألوان";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "ضغط %lld عنصر";
 "Compress “%@”" = "ضغط “%@”";
 "Connect" = "اتصال";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "يضيف الاتصال خطافًا صغيرًا إلى ~/.claude/settings.json أو ~/.codex/config.toml (مع الاحتفاظ بنسخة احتياطية بجانبه). ولا يكتب إلا ملفات الأحداث في مجلد Notchd الخاص.";
 "Connected" = "متصل";
 "Convert Image To" = "تحويل الصورة إلى";
 "Copied" = "تم النسخ";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "حتى أوقفه";
 "Use My Location" = "استخدام موقعي";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "استخدم ← → للاختيار، وReturn للاستخدام، وDelete للإزالة، وEscape للإغلاق.";
-"Uses another notify command" = "يستخدم أمر notify آخر";
 "Weather" = "الطقس";
 "Weather is unavailable right now." = "الطقس غير متاح حاليًا.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "عند انتهاء التنزيل، يعرضه النتوء لبضع ثوانٍ: انقر على رمزه لإظهاره في Finder، أو على زر الدرج لإبقائه في متناول يدك.";
@@ -480,3 +476,8 @@
 "Compact" = "مضغوط";
 "Roomy" = "فسيح";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "تُرسَل عناوين الأغاني إلى LRCLIB فقط أثناء عرض الكلمات.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "تم الاتصال. تظهر الجلسات الجديدة فورًا؛ أعد تشغيل الجلسات التي كانت مفتوحة بالفعل (يقرأ Claude Code خطافاته عند بدء الجلسة).";
+"Last heard %@" = "آخر تواصل %@";
+"Waiting for its first event" = "في انتظار أول حدث منه";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "يضيف الاتصال خطافًا صغيرًا إلى ~/.claude/settings.json أو ~/.codex/config.toml (مع الاحتفاظ بنسخة احتياطية بجانبه). ولا يكتب إلا ملفات الأحداث في مجلد Notchd الخاص، وفقط أثناء تشغيل Notchd. ويستمر أمر notify الحالي في Codex في العمل.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "يمتد إعداد notify في Codex على عدة أسطر. ضعه في سطر واحد، ثم حاول مرة أخرى.";

@@ -1,5 +1,4 @@
 /* notchd — Russian. */
-
 "Choose Shortcuts…" = "Выбрать быстрые команды…";
 "Run “%@”" = "Запустить «%@»";
 "Camera access needed" = "Нужен доступ к камере";
@@ -299,7 +298,6 @@
 "Clipboard" = "Буфер обмена";
 "Clipboard history is off" = "История буфера обмена выключена";
 "Cloudy" = "Облачно";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex уже запускает команду notify. Сначала удалите её из ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Агенты для кода";
 "Color Picker" = "Пипетка";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "Сжать объекты (%lld)";
 "Compress “%@”" = "Сжать «%@»";
 "Connect" = "Подключить";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "«Подключить» добавляет небольшой хук в ~/.claude/settings.json или ~/.codex/config.toml (рядом сохраняется резервная копия). Он лишь записывает файлы событий в собственную папку Notchd.";
 "Connected" = "Подключено";
 "Convert Image To" = "Конвертировать изображение в";
 "Copied" = "Скопировано";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "Пока я не выключу";
 "Use My Location" = "Использовать мою геопозицию";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "← → — выбор, Return — использовать, Delete — удалить, Esc — закрыть.";
-"Uses another notify command" = "Использует другую команду notify";
 "Weather" = "Погода";
 "Weather is unavailable right now." = "Погода сейчас недоступна.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Когда загрузка завершается, вырез показывает её несколько секунд: нажмите на значок, чтобы показать файл в Finder, или на кнопку лотка, чтобы держать его под рукой.";
@@ -480,3 +476,8 @@
 "Compact" = "Компактно";
 "Roomy" = "Просторно";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Названия песен отправляются в LRCLIB, только пока показан текст.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Подключено. Новые сеансы появятся сразу; уже открытые сеансы перезапустите (Claude Code считывает хуки при запуске сеанса).";
+"Last heard %@" = "Последний сигнал: %@";
+"Waiting for its first event" = "Ожидание первого события";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "«Подключить» добавляет небольшой хук в ~/.claude/settings.json или ~/.codex/config.toml (рядом сохраняется резервная копия). Он лишь записывает файлы событий в собственную папку Notchd и только пока Notchd запущен. Существующая команда notify в Codex продолжит работать.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "Параметр notify в Codex занимает несколько строк. Запишите его в одну строку и повторите попытку.";

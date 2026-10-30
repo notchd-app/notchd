@@ -1,5 +1,4 @@
 /* notchd — fi */
-
 "Choose Shortcuts…" = "Valitse pikakomennot…";
 "Run “%@”" = "Suorita ”%@”";
 "Camera access needed" = "Kameran käyttöoikeus tarvitaan";
@@ -299,7 +298,6 @@
 "Clipboard" = "Leikepöytä";
 "Clipboard history is off" = "Leikepöydän historia on pois päältä";
 "Cloudy" = "Pilvistä";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex suorittaa jo notify-komentoa. Poista se ensin tiedostosta ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Koodausagentit";
 "Color Picker" = "Värivalitsin";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "Pakkaa %lld kohdetta";
 "Compress “%@”" = "Pakkaa ”%@”";
 "Connect" = "Yhdistä";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Yhdistä lisää pienen koukun tiedostoon ~/.claude/settings.json tai ~/.codex/config.toml (varmuuskopio säilytetään sen vieressä). Se kirjoittaa tapahtumatiedostoja vain Notchdin omaan kansioon.";
 "Connected" = "Yhdistetty";
 "Convert Image To" = "Muunna kuva muotoon";
 "Copied" = "Kopioitu";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "Kunnes laitan sen pois päältä";
 "Use My Location" = "Käytä sijaintiani";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Valitse ← →, käytä Returnilla, poista Deletellä ja sulje Escillä.";
-"Uses another notify command" = "Käyttää toista notify-komentoa";
 "Weather" = "Sää";
 "Weather is unavailable right now." = "Säätiedot eivät ole juuri nyt saatavilla.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Kun lataus valmistuu, lovi näyttää sen muutaman sekunnin ajan: klikkaa sen symbolia näyttääksesi sen Finderissa tai hyllypainiketta pitääksesi sen käden ulottuvilla.";
@@ -480,3 +476,8 @@
 "Compact" = "Tiivis";
 "Roomy" = "Väljä";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Kappaleiden nimet lähetetään LRCLIBiin vain, kun sanat ovat näkyvissä.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Yhdistetty. Uudet istunnot näkyvät heti; käynnistä jo avoinna olleet istunnot uudelleen (Claude Code lukee koukkunsa istunnon alkaessa).";
+"Last heard %@" = "Viimeksi kuultu %@";
+"Waiting for its first event" = "Odotetaan ensimmäistä tapahtumaa";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Yhdistä lisää pienen koukun tiedostoon ~/.claude/settings.json tai ~/.codex/config.toml (varmuuskopio säilytetään sen vieressä). Se kirjoittaa tapahtumatiedostoja vain Notchdin omaan kansioon ja vain silloin, kun Notchd on käynnissä. Olemassa oleva Codexin notify-komento toimii edelleen.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codexin notify-asetus on usealla rivillä. Siirrä se yhdelle riville ja yritä uudelleen.";

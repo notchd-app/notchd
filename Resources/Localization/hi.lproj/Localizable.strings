@@ -1,5 +1,4 @@
 /* notchd — hi */
-
 "Choose Shortcuts…" = "शॉर्टकट्स चुनें…";
 "Run “%@”" = "“%@” चलाएँ";
 "Camera access needed" = "कैमरा ऐक्सेस आवश्यक है";
@@ -299,7 +298,6 @@
 "Clipboard" = "क्लिपबोर्ड";
 "Clipboard history is off" = "क्लिपबोर्ड इतिहास बंद है";
 "Cloudy" = "बादल";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex पहले से एक notify कमांड चलाता है। पहले इसे ~/.codex/config.toml से हटाएँ।";
 "Codex:" = "Codex:";
 "Coding Agents" = "कोडिंग एजेंट";
 "Color Picker" = "कलर पिकर";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "%lld आइटम कंप्रेस करें";
 "Compress “%@”" = "“%@” कंप्रेस करें";
 "Connect" = "कनेक्ट करें";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "कनेक्ट करने पर ~/.claude/settings.json या ~/.codex/config.toml में एक छोटा हुक जुड़ जाता है (उसके पास एक बैकअप रखा जाता है)। यह केवल Notchd के अपने फ़ोल्डर में इवेंट फ़ाइलें लिखता है।";
 "Connected" = "कनेक्टेड";
 "Convert Image To" = "इमेज को इसमें बदलें";
 "Copied" = "कॉपी किया गया";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "जब तक मैं इसे बंद न करूँ";
 "Use My Location" = "मेरे स्थान का उपयोग करें";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "चुनने के लिए ← →, उपयोग के लिए Return, हटाने के लिए Delete, बंद करने के लिए Escape का उपयोग करें।";
-"Uses another notify command" = "अन्य notify कमांड का उपयोग करता है";
 "Weather" = "मौसम";
 "Weather is unavailable right now." = "मौसम अभी उपलब्ध नहीं है।";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "जब कोई डाउनलोड पूरा होता है, तो नॉच उसे कुछ सेकंड के लिए दिखाता है: उसे Finder में दिखाने के लिए उसके आइकॉन पर क्लिक करें, या उसे पास रखने के लिए ट्रे बटन पर।";
@@ -480,3 +476,8 @@
 "Compact" = "कॉम्पैक्ट";
 "Roomy" = "खुला";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "गानों के नाम LRCLIB को केवल तभी भेजे जाते हैं जब बोल दिखाए जा रहे हों।";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "कनेक्टेड। नए सेशन तुरंत दिखेंगे; जो सेशन पहले से खुले थे, उन्हें रीस्टार्ट करें (Claude Code सेशन शुरू होने पर अपने हुक पढ़ता है)।";
+"Last heard %@" = "आख़िरी संपर्क %@";
+"Waiting for its first event" = "पहले इवेंट का इंतज़ार है";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "कनेक्ट करने पर ~/.claude/settings.json या ~/.codex/config.toml में एक छोटा हुक जुड़ जाता है (उसके पास एक बैकअप रखा जाता है)। यह केवल Notchd के अपने फ़ोल्डर में इवेंट फ़ाइलें लिखता है, और सिर्फ़ तब जब Notchd चल रहा हो। Codex की मौजूदा notify कमांड काम करती रहती है।";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex की notify सेटिंग कई पंक्तियों में फैली है। इसे एक पंक्ति में रखें, फिर दोबारा कोशिश करें।";

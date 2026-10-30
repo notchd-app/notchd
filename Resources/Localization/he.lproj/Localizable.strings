@@ -1,5 +1,4 @@
 /* notchd — he */
-
 "Choose Shortcuts…" = "בחירת קיצורים…";
 "Run “%@”" = "הפעלת ״%@״";
 "Camera access needed" = "נדרשת גישה למצלמה";
@@ -299,7 +298,6 @@
 "Clipboard" = "לוח העריכה";
 "Clipboard history is off" = "היסטוריית לוח העריכה כבויה";
 "Cloudy" = "מעונן";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex כבר מריץ פקודת notify. יש להסיר אותה קודם מ־~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "סוכני קוד";
 "Color Picker" = "בוחר צבעים";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "דחיסת %lld פריטים";
 "Compress “%@”" = "דחיסת ״%@״";
 "Connect" = "חיבור";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "״חיבור״ מוסיף hook קטן ל־~/.claude/settings.json או ל־~/.codex/config.toml (גיבוי נשמר לצידו). הוא כותב קובצי אירועים רק לתיקייה של Notchd עצמו.";
 "Connected" = "מחובר";
 "Convert Image To" = "המרת תמונה ל";
 "Copied" = "הועתק";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "עד שאכבה אותו";
 "Use My Location" = "שימוש במיקום שלי";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "← → לבחירה, Return לשימוש, Delete להסרה, Escape לסגירה.";
-"Uses another notify command" = "משתמש בפקודת notify אחרת";
 "Weather" = "מזג אוויר";
 "Weather is unavailable right now." = "מזג האוויר אינו זמין כרגע.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "כשהורדה מסתיימת, המגרעת מציגה אותה לכמה שניות: לחיצה על הצלמית מציגה אותה ב־Finder, ולחיצה על כפתור המגש שומרת אותה בהישג יד.";
@@ -480,3 +476,8 @@
 "Compact" = "דחוס";
 "Roomy" = "מרווח";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "שמות השירים נשלחים ל־LRCLIB רק כשמילות השיר מוצגות.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "מחובר. סשנים חדשים מופיעים מיד; יש להפעיל מחדש סשנים שכבר היו פתוחים (Claude Code קורא את ה־hooks שלו כשסשן מתחיל).";
+"Last heard %@" = "אות אחרון %@";
+"Waiting for its first event" = "ממתין לאירוע הראשון";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "״חיבור״ מוסיף hook קטן ל־~/.claude/settings.json או ל־~/.codex/config.toml (גיבוי נשמר לצידו). הוא כותב קובצי אירועים רק לתיקייה של Notchd עצמו, ורק כש־Notchd פועל. פקודת notify קיימת של Codex ממשיכה לעבוד.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "הגדרת notify של Codex משתרעת על כמה שורות. יש להעביר אותה לשורה אחת ולנסות שוב.";

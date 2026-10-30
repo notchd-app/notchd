@@ -19,6 +19,8 @@ struct AgentSession: Equatable, Identifiable {
     var updated = Date()
     /// The app you typed the prompt in (Terminal, iTerm, VS Code…), brought forward on click.
     var app: String?
+    /// Claude Code's transcript file, read to notice interruptions (they send no event).
+    var transcript: String?
 
     static let sample = AgentSession(id: "sample", tool: .claude, project: "notchd", state: .working)
 }
@@ -31,45 +33,55 @@ final class AgentMonitor {
     static let shared = AgentMonitor()
     static let spool = URL.appSupport.appendingPathComponent("Agents", isDirectory: true)
     private(set) var sessions: [AgentSession] = []
+    /// When each agent was last heard from, shown in Settings so you can tell the hook works.
+    private(set) var lastHeard: [AgentTool: Date] = [:]
     private var source: DispatchSourceFileSystemObject?
     private var sweep: Timer?
 
     /// Sessions running or waiting for you, newest first.
     var active: [AgentSession] { sessions.filter { $0.state != .done }.sorted { $0.updated > $1.updated } }
 
+    private var enabled = false
+
+    /// The folder is always watched while Notchd runs, so it never piles up; events only count
+    /// while the activity is on.
     func apply() {
         let prefs = Settings.shared.prefs
         let wanted = prefs.isEnabled(.agent) && prefs.liveActivitiesEnabled
-        if wanted, source == nil {
-            try? FileManager.default.createDirectory(at: Self.spool, withIntermediateDirectories: true)
-            let fd = open(Self.spool.path, O_EVTONLY)
-            guard fd >= 0 else { return }
-            let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fd, eventMask: [.write, .rename], queue: .main)
-            source.setEventHandler { [weak self] in self?.drain(maxAge: 600) }
-            source.setCancelHandler { close(fd) }
-            source.resume()
-            self.source = source
-            sweep = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in self?.dropStale() }
-            // Hooks keep writing while the activity is off: old events are history, not news.
-            drain(maxAge: 60)
-        } else if !wanted, source != nil {
-            source?.cancel()
-            source = nil
+        if wanted, !enabled {
+            sweep = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in self?.dropStale() }
+        } else if !wanted, enabled {
             sweep?.invalidate()
             sweep = nil
             sessions = []
         }
+        // Before draining: events from the last minute (sent while Notchd was starting) still count.
+        enabled = wanted
+        if source == nil {
+            try? FileManager.default.createDirectory(at: Self.spool, withIntermediateDirectories: true)
+            let fd = open(Self.spool.path, O_EVTONLY)
+            if fd >= 0 {
+                let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fd, eventMask: [.write, .rename],
+                                                                       queue: .main)
+                source.setEventHandler { [weak self] in self?.drain(maxAge: 600) }
+                source.setCancelHandler { close(fd) }
+                source.resume()
+                self.source = source
+            }
+            // Written while Notchd wasn't watching: history, not news.
+            drain(maxAge: 60)
+        }
     }
 
     /// Reads and deletes every finished event file (hooks write a hidden temp file, then rename it).
-    private func drain(maxAge: TimeInterval? = nil) {
+    private func drain(maxAge: TimeInterval) {
         let files = ((try? FileManager.default.contentsOfDirectory(at: Self.spool, includingPropertiesForKeys: [.creationDateKey]))
             ?? []).filter { $0.pathExtension == "json" && !$0.lastPathComponent.hasPrefix(".") }
             .sorted { Self.created($0) < Self.created($1) }
         for file in files {
             defer { try? FileManager.default.removeItem(at: file) }
-            if let maxAge, Date().timeIntervalSince(Self.created(file)) > maxAge { continue }
-            guard let data = try? Data(contentsOf: file),
+            guard enabled, Date().timeIntervalSince(Self.created(file)) <= maxAge,
+                  let data = try? Data(contentsOf: file),
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
             handle(json)
         }
@@ -80,6 +92,7 @@ final class AgentMonitor {
     }
 
     func handle(_ json: [String: Any]) {
+        lastHeard[json["type"] is String ? .codex : .claude] = Date()
         let cwd = json["cwd"] as? String ?? ""
         let project = cwd.isEmpty ? L("Agent") : (cwd as NSString).lastPathComponent
         if let type = json["type"] as? String {
@@ -96,27 +109,30 @@ final class AgentMonitor {
         var session = sessions.first { $0.id == id }
             ?? AgentSession(id: id, tool: .claude, project: project, state: .working)
         session.updated = Date()
+        if let transcript = json["transcript_path"] as? String { session.transcript = transcript }
         switch event {
         case "UserPromptSubmit":
             session.state = .working
             session.message = nil
             session.app = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
         case "PreToolUse", "PostToolUse":
-            guard session.state != .done else { return }
+            // Only an ongoing turn: a tool event never starts one (and isn't news for a session we don't know).
+            guard sessions.contains(where: { $0.id == id }) else { return }
             session.state = .working
             session.message = nil
         case "Notification":
+            // Claude also says "waiting for your input" a minute after it finished: that's not a question.
+            guard Self.needsYou(json) else { return }
             session.state = .waiting
             session.message = json["message"] as? String
             ActivityCenter.shared.peek(for: 4)
             Haptics.tap()
-        case "Stop", "SubagentStop":
-            guard event == "Stop" else { return }
+        case "Stop":
             sessions.removeAll { $0.id == id }
             session.state = .done
             finished(session)
             return
-        case "SessionEnd":
+        case "StopFailure", "SessionEnd":
             withAnimation(.notchClose) { sessions.removeAll { $0.id == id } }
             return
         default:
@@ -128,16 +144,44 @@ final class AgentMonitor {
         }
     }
 
+    /// Permission requests and questions need you; idle reminders and sign-in notices don't.
+    static func needsYou(_ json: [String: Any]) -> Bool {
+        if let type = json["notification_type"] as? String {
+            return type == "permission_prompt" || type == "elicitation_dialog"
+        }
+        let message = (json["message"] as? String ?? "").lowercased()
+        return !message.contains("waiting for your input") && !message.isEmpty
+    }
+
     private func finished(_ session: AgentSession) {
         if Settings.shared.prefs.agentSound { NSSound(named: "Glass")?.play() }
         ActivityCenter.shared.show(.agentDone(session), for: 5)
     }
 
-    /// A session that crashed or was closed mid-turn sends nothing more: let it go after a while.
+    /// Claude sends nothing when you press Esc or a request fails, so the transcript tells us instead:
+    /// an interruption is written there, and a turn that stopped writing for a while is over.
     private func dropStale() {
         let now = Date()
-        let kept = sessions.filter { now.timeIntervalSince($0.updated) < ($0.state == .waiting ? 7200 : 1800) }
+        let kept = sessions.filter { session in
+            guard session.state == .working else { return now.timeIntervalSince(session.updated) < 7200 }
+            guard let path = session.transcript else { return now.timeIntervalSince(session.updated) < 600 }
+            let url = URL(fileURLWithPath: path)
+            let written = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+            if now.timeIntervalSince(max(written ?? session.updated, session.updated)) > 600 { return false }
+            return !Self.interrupted(url)
+        }
         if kept != sessions { withAnimation(.notchClose) { sessions = kept } }
+    }
+
+    /// Whether the transcript's last entry is Claude Code's "[Request interrupted by user]" marker.
+    static func interrupted(_ transcript: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: transcript) else { return false }
+        defer { try? handle.close() }
+        let size = (try? handle.seekToEnd()) ?? 0
+        try? handle.seek(toOffset: size > 4096 ? size - 4096 : 0)
+        guard let data = try? handle.readToEnd() else { return false }
+        let last = String(decoding: data, as: UTF8.self).split(separator: "\n").last.map(String.init) ?? ""
+        return last.contains("[Request interrupted by user")
     }
 
     /// Brings the session's terminal or editor forward.
@@ -157,13 +201,15 @@ enum AgentHooks {
     static let claudeSettings = home.appendingPathComponent(".claude/settings.json")
     static let codexConfig = home.appendingPathComponent(".codex/config.toml")
 
-    /// Writes the event JSON from stdin into the spool, atomically.
-    static let claudeCommand = #"f="$HOME/Library/Application Support/Notchd/Agents"; mkdir -p "$f" && n="$f/.$(uuidgen)" && cat > "$n" && mv "$n" "$f/$(uuidgen).json""#
-    /// Codex passes the event JSON as the last argument.
-    static let codexCommand = #"f="$HOME/Library/Application Support/Notchd/Agents"; mkdir -p "$f" && n="$f/.$(uuidgen)" && printf %s "$1" > "$n" && mv "$n" "$f/$(uuidgen).json""#
-    private static let claudeEvents = ["UserPromptSubmit", "PostToolUse", "Notification", "Stop", "SessionEnd"]
+    /// Writes the event JSON from stdin into the spool, atomically, only while Notchd is running.
+    static let claudeCommand = #"pgrep -xq Notchd || exit 0; f="$HOME/Library/Application Support/Notchd/Agents"; mkdir -p "$f" && n="$f/.$(uuidgen)" && cat > "$n" && mv "$n" "$f/$(uuidgen).json""#
+    /// Codex passes the event JSON as the last argument. Any notify command that was there before
+    /// follows ours in the argument list and still runs, with the same arguments it always got.
+    static let codexCommand = #"j=""; for a in "$@"; do j="$a"; done; if pgrep -xq Notchd; then f="$HOME/Library/Application Support/Notchd/Agents"; mkdir -p "$f" && n="$f/.$(uuidgen)" && printf %s "$j" > "$n" && mv "$n" "$f/$(uuidgen).json"; fi; if [ $# -gt 1 ]; then exec "$@"; fi"#
+    private static let claudeEvents = ["UserPromptSubmit", "PostToolUse", "Notification", "Stop", "StopFailure", "SessionEnd"]
+    private static let originalPrefix = "# notchd-original: "
 
-    enum Status: Equatable { case notInstalled, connected, connectedDifferently, unavailable }
+    enum Status: Equatable { case notInstalled, connected, unavailable }
 
     static var claudeStatus: Status {
         guard FileManager.default.fileExists(atPath: home.appendingPathComponent(".claude").path) else { return .unavailable }
@@ -174,8 +220,7 @@ enum AgentHooks {
     static var codexStatus: Status {
         guard FileManager.default.fileExists(atPath: home.appendingPathComponent(".codex").path) else { return .unavailable }
         let text = (try? String(contentsOf: codexConfig, encoding: .utf8)) ?? ""
-        if text.contains(marker) { return .connected }
-        return hasTopLevelNotify(text) ? .connectedDifferently : .notInstalled
+        return text.contains(marker) ? .connected : .notInstalled
     }
 
     static func connectClaude() throws { try connectClaude(at: claudeSettings) }
@@ -216,35 +261,62 @@ enum AgentHooks {
         (group["hooks"] as? [[String: Any]] ?? []).contains { ($0["command"] as? String)?.contains(marker) == true }
     }
 
-    /// `notify` must be a top-level key, so it goes above the first [table].
+    /// `notify` must be a top-level key. Without one, ours goes above the first [table]. With one, it's
+    /// wrapped: Codex runs our command, which runs the original. The original line is kept as a comment
+    /// so Disconnect can put it back exactly.
     static func connectCodex(at link: URL) throws {
         let url = link.resolvingSymlinksInPath()
         let text = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
         guard !text.contains(marker) else { return }
-        guard !hasTopLevelNotify(text) else { throw AgentError(L("Codex already runs a notify command. Remove it from ~/.codex/config.toml first.")) }
-        let line = "notify = ['sh', '-c', '\(codexCommand)', 'notchd']  # added by Notchd\n"
-        try backup(url)
-        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try (line + (text.isEmpty ? "" : "\n" + text)).write(to: url, atomically: true, encoding: .utf8)
+        var lines = text.isEmpty ? [] : text.components(separatedBy: "\n")
+        let ours = "'sh', '-c', '\(codexCommand)', 'notchd'"
+        if let index = topLevelNotifyLine(lines) {
+            let original = lines[index]
+            guard let open = original.firstIndex(of: "["), let close = original.lastIndex(of: "]"), open < close else {
+                throw AgentError(L("Codex's notify setting spans several lines. Put it on one line, then try again."))
+            }
+            let inner = original[original.index(after: open)..<close].trimmingCharacters(in: .whitespaces)
+            lines[index] = "notify = [\(ours)\(inner.isEmpty ? "" : ", " + inner)]  # added by Notchd"
+            lines.insert(originalPrefix + original, at: index)
+        } else {
+            lines.insert("notify = [\(ours)]  # added by Notchd", at: 0)
+            if lines.count > 1 { lines.insert("", at: 1) }
+        }
+        try write(lines.joined(separator: "\n") + (text.isEmpty ? "\n" : ""), to: url)
     }
 
     static func disconnectCodex(at link: URL) throws {
         let url = link.resolvingSymlinksInPath()
         let text = try String(contentsOf: url, encoding: .utf8)
-        try backup(url)
-        var lines = text.components(separatedBy: "\n").filter { !$0.contains(marker) }
-        if lines.first?.isEmpty == true { lines.removeFirst() }
-        try lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
+        var lines: [String] = []
+        for line in text.components(separatedBy: "\n") {
+            if line.hasPrefix(originalPrefix) { lines.append(String(line.dropFirst(originalPrefix.count))) }
+            else if !line.contains(marker) { lines.append(line) }
+        }
+        if lines.first?.isEmpty == true, !text.contains(originalPrefix) { lines.removeFirst() }
+        try write(lines.joined(separator: "\n"), to: url)
     }
 
-    static func hasTopLevelNotify(_ toml: String) -> Bool {
-        for line in toml.components(separatedBy: "\n") {
+    static func hasTopLevelNotify(_ toml: String) -> Bool { topLevelNotifyLine(toml.components(separatedBy: "\n")) != nil }
+
+    private static func topLevelNotifyLine(_ lines: [String]) -> Int? {
+        for (i, line) in lines.enumerated() {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("[") { return false }
-            if trimmed.range(of: #"^notify\s*="#, options: .regularExpression) != nil { return true }
+            if trimmed.hasPrefix("[") { return nil }
+            if trimmed.range(of: #"^notify\s*="#, options: .regularExpression) != nil { return i }
         }
-        return false
+        return nil
     }
+
+    /// Writes with a backup, keeping the file's permissions (config files are often private).
+    private static func write(_ text: String, to url: URL) throws {
+        let permissions = (try? FileManager.default.attributesOfItem(atPath: url.path))?[.posixPermissions]
+        try backup(url)
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try text.write(to: url, atomically: true, encoding: .utf8)
+        if let permissions { try? FileManager.default.setAttributes([.posixPermissions: permissions], ofItemAtPath: url.path) }
+    }
+
 
     struct AgentError: LocalizedError {
         let errorDescription: String?
@@ -260,10 +332,8 @@ enum AgentHooks {
     }
 
     private static func writeJSON(_ json: [String: Any], to url: URL) throws {
-        try backup(url)
-        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         let data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
-        try data.write(to: url, options: .atomic)
+        try write(String(decoding: data, as: UTF8.self) + "\n", to: url)
     }
 
     /// settings.json → settings.json.notchd-backup, overwritten each time.

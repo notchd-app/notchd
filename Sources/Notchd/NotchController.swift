@@ -109,6 +109,9 @@ final class NotchController {
     /// Renders the notch window's top-centre into a PNG, for checking layouts during development.
     func snapshot(to path: String) {
         guard let view = panel.contentView else { return }
+        // Animations stall while the display sleeps, so also note what the notch is showing.
+        try? String(describing: ActivityCenter.shared.current(for: model))
+            .write(toFile: path + ".txt", atomically: true, encoding: .utf8)
         let size = model.isOpen ? model.openSize : model.size(activity: ActivityCenter.shared.current(for: model))
         let top = view.isFlipped ? view.bounds.minY : view.bounds.maxY - size.height - 20
         let rect = NSRect(x: view.bounds.midX - size.width / 2 - 40, y: top, width: size.width + 80, height: size.height + 20)

@@ -1,5 +1,4 @@
 /* notchd — sr */
-
 "Choose Shortcuts…" = "Изабери пречице…";
 "Run “%@”" = "Покрени „%@“";
 "Camera access needed" = "Потребан је приступ камери";
@@ -299,7 +298,6 @@
 "Clipboard" = "Остава";
 "Clipboard history is off" = "Историја оставе је искључена";
 "Cloudy" = "Облачно";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex већ покреће notify команду. Прво је уклоните из ~/.codex/config.toml.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Агенти за кодирање";
 "Color Picker" = "Бирач боја";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "Компримуј ставке (%lld)";
 "Compress “%@”" = "Компримуј „%@”";
 "Connect" = "Повежи";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Повежи додаје мали hook у ~/.claude/settings.json или ~/.codex/config.toml (резервна копија се чува поред). Он само уписује датотеке догађаја у Notchd-ову фасциклу.";
 "Connected" = "Повезано";
 "Convert Image To" = "Конвертуј слику у";
 "Copied" = "Копирано";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "Док га не искључим";
 "Use My Location" = "Користи моју локацију";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "← → за избор, Return за употребу, Delete за уклањање, Escape за затварање.";
-"Uses another notify command" = "Користи другу notify команду";
 "Weather" = "Време";
 "Weather is unavailable right now." = "Време тренутно није доступно.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Када се преузимање заврши, зарез га приказује неколико секунди: кликните на иконицу да га прикажете у Finder-у или на дугме ладице да га задржите при руци.";
@@ -480,3 +476,8 @@
 "Compact" = "Збијено";
 "Roomy" = "Пространо";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Наслови песама шаљу се на LRCLIB само док је текст приказан.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Повезано. Нове сесије се одмах приказују; поново покрените сесије које су већ биле отворене (Claude Code чита своје hook-ове када сесија почне).";
+"Last heard %@" = "Последњи сигнал: %@";
+"Waiting for its first event" = "Чека се први догађај";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Повежи додаје мали hook у ~/.claude/settings.json или ~/.codex/config.toml (резервна копија се чува поред). Он само уписује датотеке догађаја у Notchd-ову фасциклу, и то само док Notchd ради. Постојећа Codex notify команда наставља да ради.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex-ово notify подешавање се протеже у више редова. Ставите га у један ред, па покушајте поново.";

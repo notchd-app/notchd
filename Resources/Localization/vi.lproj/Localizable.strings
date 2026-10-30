@@ -1,5 +1,4 @@
 /* notchd — vi */
-
 "Choose Shortcuts…" = "Chọn phím tắt…";
 "Run “%@”" = "Chạy “%@”";
 "Camera access needed" = "Cần quyền truy cập camera";
@@ -299,7 +298,6 @@
 "Clipboard" = "Bảng tạm";
 "Clipboard history is off" = "Lịch sử bảng tạm đang tắt";
 "Cloudy" = "Có mây";
-"Codex already runs a notify command. Remove it from ~/.codex/config.toml first." = "Codex đã chạy một lệnh notify. Hãy xóa lệnh đó khỏi ~/.codex/config.toml trước.";
 "Codex:" = "Codex:";
 "Coding Agents" = "Tác nhân lập trình";
 "Color Picker" = "Bộ chọn màu";
@@ -310,7 +308,6 @@
 "Compress %lld Items" = "Nén %lld mục";
 "Compress “%@”" = "Nén “%@”";
 "Connect" = "Kết nối";
-"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder." = "Kết nối sẽ thêm một hook nhỏ vào ~/.claude/settings.json hoặc ~/.codex/config.toml (một bản sao lưu được giữ bên cạnh). Nó chỉ ghi các tệp sự kiện vào thư mục riêng của Notchd.";
 "Connected" = "Đã kết nối";
 "Convert Image To" = "Chuyển đổi hình ảnh sang";
 "Copied" = "Đã sao chép";
@@ -458,7 +455,6 @@
 "Until I turn it off" = "Cho đến khi tôi tắt";
 "Use My Location" = "Dùng vị trí của tôi";
 "Use ← → to choose, Return to use it, Delete to remove it, Escape to close." = "Dùng ← → để chọn, Return để dùng, Delete để xóa, Escape để đóng.";
-"Uses another notify command" = "Đang dùng lệnh notify khác";
 "Weather" = "Thời tiết";
 "Weather is unavailable right now." = "Hiện không có dữ liệu thời tiết.";
 "When a download finishes, the notch shows it for a few seconds: click its icon to show it in Finder, or the tray button to keep it at hand." = "Khi một tệp tải về xong, tai thỏ sẽ hiển thị tệp đó trong vài giây: bấm vào biểu tượng để hiển thị trong Finder, hoặc bấm nút khay để giữ tệp trong tầm tay.";
@@ -480,3 +476,8 @@
 "Compact" = "Gọn";
 "Roomy" = "Rộng";
 "Song titles are sent to LRCLIB only while lyrics are shown." = "Tên bài hát chỉ được gửi đến LRCLIB khi đang hiển thị lời bài hát.";
+"Connected. New sessions show up right away; restart sessions that were already open (Claude Code reads its hooks when a session starts)." = "Đã kết nối. Các phiên mới sẽ hiện ngay; hãy khởi động lại các phiên đang mở sẵn (Claude Code đọc các hook khi một phiên bắt đầu).";
+"Last heard %@" = "Tín hiệu gần nhất: %@";
+"Waiting for its first event" = "Đang chờ sự kiện đầu tiên";
+"Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Kết nối sẽ thêm một hook nhỏ vào ~/.claude/settings.json hoặc ~/.codex/config.toml (một bản sao lưu được giữ bên cạnh). Nó chỉ ghi các tệp sự kiện vào thư mục riêng của Notchd và chỉ khi Notchd đang chạy. Lệnh notify hiện có của Codex vẫn tiếp tục hoạt động.";
+"Codex's notify setting spans several lines. Put it on one line, then try again." = "Cài đặt notify của Codex trải dài trên nhiều dòng. Hãy đưa nó về một dòng rồi thử lại.";
