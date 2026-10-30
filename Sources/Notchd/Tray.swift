@@ -40,6 +40,8 @@ final class TrayStore {
     var previewURL: URL?
     /// File whose name is being edited.
     var renaming: URL?
+    /// The last tray rule that failed, and why: shown as a banner in the tray until dismissed.
+    var ruleError: String?
 
     convenience init(settings: Settings = .shared) {
         self.init(folder: settings.prefs.trayFolder.map { URL(fileURLWithPath: $0, isDirectory: true) }
@@ -188,6 +190,14 @@ final class TrayStore {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) { stacks.append(added) }
             saveStacks()
         }
+        applyRules(added.map { folder.appendingPathComponent($0) })
+    }
+
+    /// Rules see what you add (drops, pastes). Action and capture results come in through `importCapture`,
+    /// which skips them, so a rule's output can't set off another rule.
+    private func applyRules(_ urls: [URL]) {
+        guard !urls.isEmpty, !settings.prefs.trayRules.isEmpty else { return }
+        TrayRules.process(urls, rules: settings.prefs.trayRules, store: self)
     }
 
     /// Sends to the Trash rather than deleting: the tray folder may be one the user also uses.
@@ -287,6 +297,7 @@ final class TrayStore {
         do {
             try data.write(to: target)
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) { files.append(target) }
+            applyRules([target])
         } catch {
             NSLog("[Tray] Failed to write \(name): \(error)")
         }
@@ -561,6 +572,14 @@ struct TrayView: View {
             .padding(6)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: store.files.isEmpty)
         }
+        .overlay(alignment: .bottom) {
+            if let error = store.ruleError {
+                RuleErrorBanner(message: error) { store.ruleError = nil }
+                    .padding(8)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(response: 0.35, dampingFraction: 0.7), value: store.ruleError)
         .scaleEffect(targeted ? 1.02 : 1)
         .animation(.spring(response: 0.3, dampingFraction: 0.55), value: targeted)
         .onDrop(of: DroppedItem.types, isTargeted: $targeted) { providers in
@@ -605,6 +624,34 @@ struct TrayView: View {
         .buttonStyle(BouncyButtonStyle())
         .help("Clear All (⇧⌘⌫)")
         .accessibilityLabel(Text("Clear All"))
+    }
+}
+
+/// "Rule failed" line at the bottom of the tray; it goes away on its own after a while.
+private struct RuleErrorBanner: View {
+    let message: String
+    let dismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow)
+            Text(message).lineLimit(2).truncationMode(.middle)
+            Spacer(minLength: 4)
+            Button(action: dismiss) {
+                Image(systemName: "xmark").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
+            }
+            .buttonStyle(BouncyButtonStyle())
+            .accessibilityLabel(Text("Dismiss"))
+        }
+        .font(.system(size: 11, weight: .medium))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color(white: 0.16)))
+        .help(Text(message))
+        .task(id: message) {
+            try? await Task.sleep(for: .seconds(12))
+            dismiss()
+        }
     }
 }
 

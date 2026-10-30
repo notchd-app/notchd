@@ -91,6 +91,21 @@ Drag anything to the top of the screen and the notch opens into two drop zones: 
 - **Right-click a file for more**: compress to zip or expand one, convert images to PNG, JPEG or HEIC, make them smaller for mail, remove the background, combine images or PDFs into one PDF, or copy the text in an image. Results land in the tray; originals are never changed.
 - Choose where tray files live, copy or move on drop, auto-clear old files. Removed files go to the Trash, never straight to oblivion.
 
+#### Rules
+**Settings → Tray → Rules** makes the tray act on files as they arrive. A rule says which files it's for (kind, extensions, a name like `Screenshot*`, a size) and what to do with them, step by step: expand archives, compress, convert or shrink images, remove the background, make a PDF, run one of your scripts, save to a folder. Each step works on what the step before made, results land in the tray, and the original stays unless you tick *Then move the original to the Trash*. The first rule that matches a file wins; drag rules to reorder them. If a rule fails, a line at the bottom of the tray says why.
+
+#### Your own scripts
+Any executable file in `~/Library/Application Support/Notchd/Scripts` shows up under **Run Script** in a tray file's right-click menu, and as a rule step. An example, `File List.sh`, is there to copy.
+
+```sh
+#!/bin/sh
+# "$@" are the tray files; whatever you write to $NOTCHD_OUTPUT lands in the tray.
+# Resize images to at most 1024 px.
+for f in "$@"; do sips -Z 1024 "$f" --out "$NOTCHD_OUTPUT" >/dev/null; done
+```
+
+Scripts run in the files' folder with Homebrew on the `PATH`, are stopped after 60 seconds, and report a problem with a non-zero exit code (what they print to stderr is shown). File paths are passed as arguments, never through a shell.
+
 ### Clipboard history
 Everything you copy appears in the notch's **Clipboard** tab: text, links, images and files, newest first. **⇧⌘V** opens it from anywhere; use ← → and Return to paste it back into the app you were in.
 
@@ -199,6 +214,7 @@ Sources/Notchd/
   Clipboard / Pomodoro / Stats / Weather / Lyrics / ColorPicker .swift
   Focus / Privacy / Downloads / Agents / KeepAwake / AudioDevices .swift
   TrayActions.swift     zip, image conversion, background removal, PDFs
+  TrayRules / TrayScripts .swift  automatic tray rules, your own scripts
   Grid.swift            unit-based widget layout
   Settings.swift        preferences (one JSON blob) and the Settings window
   Welcome.swift         first-launch tour

@@ -207,6 +207,7 @@ struct Prefs: Codable, Equatable {
     var trayFolder: String?  // nil = default
     var trayMoveOnDrop = false
     var trayAutoClearDays = 0.0
+    var trayRules: [TrayRule] = []
 
     func isEnabled(_ kind: ActivityKind) -> Bool { activities.contains { $0.kind == kind && $0.enabled } }
 
@@ -1214,6 +1215,13 @@ private struct TrayPane: View {
     @Bindable private var tray = TrayStore.shared
 
     var body: some View {
+        SubTabs(customizeTitle: "Rules") { general } customize: { TrayRulesEditor() }
+            .alert(item: $tray.folderChangeNotice) { notice in
+                Alert(title: Text(notice.title), message: Text(notice.message), dismissButton: .default(Text("OK")))
+            }
+    }
+
+    private var general: some View {
         Pane {
             LabeledContent("Storage folder:") {
                 VStack(alignment: .leading, spacing: 6) {
@@ -1260,9 +1268,6 @@ private struct TrayPane: View {
                 }
             }
         }
-        .alert(item: $tray.folderChangeNotice) { notice in
-            Alert(title: Text(notice.title), message: Text(notice.message), dismissButton: .default(Text("OK")))
-        }
     }
 
     private func chooseFolder() {
@@ -1273,6 +1278,195 @@ private struct TrayPane: View {
         panel.prompt = "Use Folder"
         panel.directoryURL = tray.folder
         if panel.runModal() == .OK, let url = panel.url { tray.setFolder(url) }
+    }
+}
+
+/// Tray rules: a list on the left (first match wins, drag to reorder), the selected rule on the right.
+private struct TrayRulesEditor: View {
+    @Bindable private var settings = Settings.shared
+    @Local private var selection: UUID? = Settings.shared.prefs.trayRules.first?.id
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 20) {
+            VStack(alignment: .leading, spacing: 8) {
+                List(selection: $selection) {
+                    ForEach($settings.prefs.trayRules) { $rule in
+                        HStack(spacing: 10) {
+                            Image(systemName: rule.steps.first?.icon ?? "wand.and.stars")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .frame(width: 26, height: 26)
+                                .background(RoundedRectangle(cornerRadius: 7, style: .continuous).fill(.purple.gradient))
+                            Text(rule.title).lineLimit(1)
+                            Spacer(minLength: 4)
+                            Toggle("", isOn: $rule.enabled).toggleStyle(.switch).labelsHidden().controlSize(.small)
+                        }
+                        .padding(.vertical, 4)
+                        .tag(rule.id)
+                    }
+                    .onMove { settings.prefs.trayRules.move(fromOffsets: $0, toOffset: $1) }
+                }
+                .frame(width: 270, height: 300)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay {
+                    if settings.prefs.trayRules.isEmpty {
+                        Text("No rules yet").foregroundStyle(.secondary)
+                    }
+                }
+                HStack(spacing: 6) {
+                    Button { add() } label: { Image(systemName: "plus") }
+                        .help("Add Rule")
+                    Button { remove() } label: { Image(systemName: "minus") }
+                        .disabled(selection == nil)
+                        .help("Delete Rule")
+                }
+                Caption("When files land in the tray, the first rule that matches each one runs. Drag to reorder.")
+                    .frame(width: 270, alignment: .leading)
+            }
+            Group {
+                if let index = settings.prefs.trayRules.firstIndex(where: { $0.id == selection }) {
+                    TrayRuleForm(rule: $settings.prefs.trayRules[index])
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "wand.and.stars").font(.system(size: 28)).foregroundStyle(.secondary)
+                        Caption("Rules do things to files as they arrive: expand archives, shrink photos, run your own scripts…")
+                            .multilineTextAlignment(.center)
+                        Button("Add Rule") { add() }
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 300)
+                }
+            }
+            .frame(width: 380)
+        }
+        .padding(24)
+    }
+
+    private func add() {
+        let rule = TrayRule(name: L("New Rule"))
+        settings.prefs.trayRules.append(rule)
+        selection = rule.id
+    }
+
+    private func remove() {
+        guard let index = settings.prefs.trayRules.firstIndex(where: { $0.id == selection }) else { return }
+        settings.prefs.trayRules.remove(at: index)
+        selection = settings.prefs.trayRules.indices.contains(index) ? settings.prefs.trayRules[index].id
+            : settings.prefs.trayRules.last?.id
+    }
+}
+
+private struct TrayRuleForm: View {
+    @Binding var rule: TrayRule
+    @Local private var scripts = TrayScripts.list()
+
+    var body: some View {
+        Form {
+            TextField("Name:", text: $rule.name, prompt: Text("Untitled Rule"))
+            Section {
+                Picker("Kind:", selection: $rule.kind) {
+                    ForEach(TrayRule.FileKind.allCases) { Text($0.title).tag($0) }
+                }
+                TextField("Extensions:", text: extensions, prompt: Text("Any"))
+                TextField("Name matches:", text: $rule.namePattern, prompt: Text("Any, or e.g. Screenshot*"))
+                TextField("Larger than (MB):", value: megabytes(\.minBytes), format: .number, prompt: Text("Any"))
+                TextField("Smaller than (MB):", value: megabytes(\.maxBytes), format: .number, prompt: Text("Any"))
+            } header: {
+                Text("When a file like this arrives").font(.headline).padding(.top, 10)
+            } footer: {
+                Caption("Separate extensions with commas. * stands for any text in a name.")
+            }
+            Section {
+                ForEach(rule.steps.indices, id: \.self) { index in
+                    stepRow(index)
+                }
+                Menu("Add Step") {
+                    ForEach(TrayRule.Step.all, id: \.title) { step in
+                        Button { rule.steps.append(step) } label: { Label(step.title, systemImage: step.icon) }
+                    }
+                }
+                .fixedSize()
+                Toggle("Then move the original to the Trash", isOn: $rule.trashOriginal)
+            } header: {
+                Text("Do this").font(.headline).padding(.top, 10)
+            } footer: {
+                Caption("Each step works on what the step before made. Results land in the tray; originals are kept unless you choose otherwise.")
+            }
+        }
+        .onAppear { scripts = TrayScripts.list() }
+    }
+
+    // ponytail: rows are addressed by index; the guard covers a stale index while a removal animates.
+    @ViewBuilder private func stepRow(_ index: Int) -> some View {
+        if rule.steps.indices.contains(index) { stepContent(index) }
+    }
+
+    private func stepContent(_ index: Int) -> some View {
+        HStack(spacing: 8) {
+            Text("\(index + 1).").monospacedDigit().foregroundStyle(.secondary)
+            Image(systemName: rule.steps[index].icon).frame(width: 18)
+            switch rule.steps[index] {
+            // Pickers keep their label inline: in a Form it would otherwise move to the label column.
+            case let .convert(format):
+                Text("Convert to")
+                Picker("", selection: Binding(get: { format }, set: { rule.steps[index] = .convert($0) })) {
+                    ForEach(TrayActions.ImageFormat.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .labelsHidden()
+                .fixedSize()
+            case let .script(name):
+                Text("Run")
+                Picker("", selection: Binding(get: { name }, set: { rule.steps[index] = .script($0) })) {
+                    if !scripts.contains(name) { Text("Choose…").tag(name) }
+                    ForEach(scripts, id: \.self) { Text($0).tag($0) }
+                }
+                .labelsHidden()
+                .fixedSize()
+                Button { NSWorkspace.shared.open(TrayScripts.folder); scripts = TrayScripts.list() } label: {
+                    Image(systemName: "folder")
+                }
+                .help("Open Scripts Folder")
+            case let .saveTo(path):
+                Text(path.isEmpty ? L("No folder chosen") : (path as NSString).abbreviatingWithTildeInPath)
+                    .lineLimit(1).truncationMode(.middle)
+                    .foregroundStyle(path.isEmpty ? .secondary : .primary)
+                    .help(path)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button("Choose…") { chooseFolder(for: index) }.fixedSize()
+            default:
+                Text(rule.steps[index].title)
+            }
+            Spacer(minLength: 4)
+            Button { rule.steps.remove(at: index) } label: { Image(systemName: "minus.circle") }
+                .buttonStyle(.borderless)
+                .help("Remove Step")
+        }
+    }
+
+    private var extensions: Binding<String> {
+        Binding(
+            get: { rule.extensions.joined(separator: ", ") },
+            set: { text in
+                rule.extensions = text.split(whereSeparator: { $0 == "," || $0 == " " })
+                    .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: ".")) }
+                    .filter { !$0.isEmpty }
+            }
+        )
+    }
+
+    private func megabytes(_ key: WritableKeyPath<TrayRule, Int?>) -> Binding<Double?> {
+        Binding(
+            get: { rule[keyPath: key].map { Double($0) / 1_000_000 } },
+            set: { rule[keyPath: key] = $0.map { Int($0 * 1_000_000) } }
+        )
+    }
+
+    private func chooseFolder(for index: Int) {
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.prompt = L("Use Folder")
+        if panel.runModal() == .OK, let url = panel.url { rule.steps[index] = .saveTo(url.path) }
     }
 }
 
