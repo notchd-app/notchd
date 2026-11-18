@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Al escribir se activa el candado; haz clic en él para liberarlo.";
 "Volume & brightness:" = "Volumen y brillo:";
 "Show them in the notch" = "Mostrarlos en la muesca";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Sustituye el indicador de macOS mientras se pulsan las teclas. El brillo funciona en la pantalla integrada.";
 "On every screen" = "En todas las pantallas";
 "Warn near full volume (orange, then red)" = "Avisar cerca del volumen máximo (naranja y luego rojo)";
 "Inner spacing:" = "Margen interior:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Esperando su primer evento";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Conectar añade un pequeño hook a ~/.claude/settings.json o ~/.codex/config.toml (se guarda una copia de seguridad al lado). Solo escribe archivos de eventos en la carpeta propia de Notchd, y solo mientras Notchd está en ejecución. Un comando notify de Codex existente sigue funcionando.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "El ajuste notify de Codex ocupa varias líneas. Ponlo en una sola línea y vuelve a intentarlo.";
-
 /* Tray rules and scripts */
 "Any file" = "Cualquier archivo";
 "Image" = "Imagen";
@@ -529,3 +527,12 @@
 "Run" = "Ejecutar";
 "No folder chosen" = "No se ha elegido ninguna carpeta";
 "Remove Step" = "Quitar paso";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "La muesca crece para mostrar el nivel al cambiar el volumen o el brillo. El brillo funciona en la pantalla integrada.";
+"Hide the macOS overlay" = "Ocultar el indicador de macOS";
+"No crash reports" = "Ningún informe de fallos";
+"1 crash report" = "1 informe de fallos";
+"%lld crash reports" = "%lld informes de fallos";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Si notchd falla o se bloquea, se guarda un informe en este Mac, en ~/Library/Logs/Notchd. No se envía nada a ningún sitio.";
+"Finish your capture, then try again." = "Termina la captura y vuelve a intentarlo.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml no se ha podido leer como texto, así que Notchd no lo ha modificado.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd gestiona por sí mismo las teclas de volumen y brillo, así macOS nunca muestra su propio indicador. Necesita acceso de accesibilidad.";

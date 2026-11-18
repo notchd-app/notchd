@@ -152,6 +152,11 @@ final class Updater {
     }
 
     private func swapAndRelaunch(with newApp: URL) {
+        // Quitting is refused during a capture: the swap would then wait and strike at some later quit.
+        guard !CaptureManager.shared.isActive else {
+            status = .failed(L("Finish your capture, then try again."))
+            return
+        }
         let current = Bundle.main.bundleURL
         guard FileManager.default.isWritableFile(atPath: current.deletingLastPathComponent().path) else {
             status = .failed(String(localized: "Can't write to \(current.deletingLastPathComponent().path). Download it from GitHub instead."))

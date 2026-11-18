@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Введення вмикає замок; клацніть замок, щоб зняти його.";
 "Volume & brightness:" = "Гучність і яскравість:";
 "Show them in the notch" = "Показувати їх у вирізі";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Замінює індикатор macOS, поки натиснуто клавіші. Яскравість працює на вбудованому дисплеї.";
 "On every screen" = "На кожному екрані";
 "Warn near full volume (orange, then red)" = "Попереджати про майже максимальну гучність (помаранчевим, потім червоним)";
 "Inner spacing:" = "Внутрішні відступи:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Очікування першої події";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "«Під’єднати» додає невеликий хук до ~/.claude/settings.json або ~/.codex/config.toml (поруч зберігається резервна копія). Він лише записує файли подій у власну папку Notchd і лише поки Notchd запущено. Наявна команда notify у Codex і далі працюватиме.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Параметр notify у Codex займає кілька рядків. Запишіть його в один рядок і спробуйте ще раз.";
-
 /* Tray rules and scripts */
 "Any file" = "Будь-який файл";
 "Image" = "Зображення";
@@ -529,3 +527,12 @@
 "Run" = "Виконати";
 "No folder chosen" = "Папку не вибрано";
 "Remove Step" = "Вилучити крок";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Коли ви змінюєте гучність або яскравість, виріз збільшується й показує рівень. Яскравість працює на вбудованому дисплеї.";
+"Hide the macOS overlay" = "Приховувати індикатор macOS";
+"No crash reports" = "Немає звітів про збої";
+"1 crash report" = "1 звіт про збій";
+"%lld crash reports" = "Звітів про збої: %lld";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Якщо notchd аварійно завершить роботу або зависне, звіт збережеться на цьому Mac у папці ~/Library/Logs/Notchd. Нічого нікуди не надсилається.";
+"Finish your capture, then try again." = "Завершіть знімання екрана й спробуйте ще раз.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml не вдалося прочитати як текст, тому Notchd не змінював його.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd сам обробляє клавіші гучності та яскравості, тож macOS ніколи не показує власний індикатор. Потрібен доступ «Доступність».";

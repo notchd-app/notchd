@@ -60,7 +60,7 @@ final class PomodoroStore {
 
     init(file: URL = URL.appSupport.appendingPathComponent("pomodoro.json")) {
         self.file = file
-        state = (try? JSONDecoder().decode(PomodoroState.self, from: Data(contentsOf: file)))
+        state = Stored.load(PomodoroState.self, from: file)
             ?? PomodoroState(remaining: Self.duration(of: .work))
         rollOverDay()
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in self?.tick() }
@@ -253,7 +253,8 @@ struct PomodoroActivityTrailing: View {
         } else {
             TimelineView(.periodic(from: .now, by: 1)) { timeline in
                 let left = state.remaining(at: timeline.date)
-                Text(left >= 60 ? "\(Int((left / 60).rounded(.up)))m" : "\(Int(left.rounded(.up)))s")
+                let shown = left.isFinite ? min(max(left, 0), 359_999) : 0
+                Text(shown >= 60 ? "\(Int((shown / 60).rounded(.up)))m" : "\(Int(shown.rounded(.up)))s")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(state.phase.color)

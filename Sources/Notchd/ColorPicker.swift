@@ -75,7 +75,7 @@ final class ColorPickerStore {
 
     init(file: URL = URL.appSupport.appendingPathComponent("colors.json")) {
         self.file = file
-        history = (try? JSONDecoder().decode([PickedColor].self, from: Data(contentsOf: file))) ?? []
+        history = Stored.load([PickedColor].self, from: file) ?? []
     }
 
     /// The system eyedropper: pick any pixel on any screen, then it's copied in your favorite format.

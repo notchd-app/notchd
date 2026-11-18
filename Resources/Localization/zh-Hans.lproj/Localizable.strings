@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "输入时会开启锁定；点按锁即可解除。";
 "Volume & brightness:" = "音量与亮度：";
 "Show them in the notch" = "在刘海中显示";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "按下按键时替代 macOS 浮层。亮度适用于内建显示器。";
 "On every screen" = "在所有屏幕上";
 "Warn near full volume (orange, then red)" = "接近最大音量时提醒（先橙色，后红色）";
 "Inner spacing:" = "内边距：";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "正在等待第一个事件";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "“连接”会在 ~/.claude/settings.json 或 ~/.codex/config.toml 中添加一个小型挂钩（并在旁边保留备份）。它只会在 Notchd 运行时将事件文件写入 Notchd 自己的文件夹。现有的 Codex notify 命令仍可正常使用。";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex 的 notify 设置跨越了多行。请将其改为一行，然后重试。";
-
 /* Tray rules and scripts */
 "Any file" = "任意文件";
 "Image" = "图像";
@@ -529,3 +527,12 @@
 "Run" = "运行";
 "No folder chosen" = "未选取文件夹";
 "Remove Step" = "移除步骤";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "调整音量或亮度时，刘海会扩展以显示当前级别。亮度适用于内建显示器。";
+"Hide the macOS overlay" = "隐藏 macOS 浮层";
+"No crash reports" = "没有崩溃报告";
+"1 crash report" = "1 份崩溃报告";
+"%lld crash reports" = "%lld 份崩溃报告";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "如果 notchd 崩溃或卡死，报告会存储在这台 Mac 上的 ~/Library/Logs/Notchd 中。不会发送到任何地方。";
+"Finish your capture, then try again." = "请先完成截屏或录屏，然后重试。";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml 无法作为文本读取，因此 Notchd 未作改动。";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd 自行处理音量键和亮度键，因此 macOS 不会再显示自带的弹出提示。需要辅助功能访问权限。";

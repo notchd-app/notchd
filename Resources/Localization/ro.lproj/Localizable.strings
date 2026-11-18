@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Tastarea activează blocarea; fă clic pe lacăt pentru a o elibera.";
 "Volume & brightness:" = "Volum și luminozitate:";
 "Show them in the notch" = "Afișează-le în notch";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Înlocuiește suprapunerea macOS cât timp tastele sunt apăsate. Luminozitatea funcționează pe ecranul încorporat.";
 "On every screen" = "Pe fiecare ecran";
 "Warn near full volume (orange, then red)" = "Avertizează aproape de volumul maxim (portocaliu, apoi roșu)";
 "Inner spacing:" = "Spațiere interioară:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Se așteaptă primul eveniment";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Conectează adaugă un mic hook în ~/.claude/settings.json sau ~/.codex/config.toml (o copie de rezervă e păstrată alături). Scrie doar fișiere de evenimente în dosarul propriu al Notchd și doar cât timp Notchd rulează. O comandă notify existentă din Codex continuă să funcționeze.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Setarea notify din Codex se întinde pe mai multe rânduri. Pune-o pe un singur rând, apoi încearcă din nou.";
-
 /* Tray rules and scripts */
 "Any file" = "Orice fișier";
 "Image" = "Imagine";
@@ -529,3 +527,12 @@
 "Run" = "Rulează";
 "No folder chosen" = "Niciun dosar ales";
 "Remove Step" = "Elimină pasul";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Notch-ul se mărește pentru a afișa nivelul când modifici volumul sau luminozitatea. Luminozitatea funcționează pe ecranul încorporat.";
+"Hide the macOS overlay" = "Ascunde suprapunerea macOS";
+"No crash reports" = "Niciun raport de eroare";
+"1 crash report" = "1 raport de eroare";
+"%lld crash reports" = "Rapoarte de eroare: %lld";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Dacă notchd se închide neașteptat sau se blochează, un raport este salvat pe acest Mac, în ~/Library/Logs/Notchd. Nimic nu este trimis nicăieri.";
+"Finish your capture, then try again." = "Finalizează captura, apoi încearcă din nou.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml nu a putut fi citit ca text, așa că Notchd nu l-a modificat.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd gestionează el însuși tastele de volum și luminozitate, astfel încât macOS nu își mai afișează niciodată propria fereastră. Necesită acces la Accesibilitate.";

@@ -42,7 +42,7 @@ final class TimersStore {
     var expiredLabel: String? { entries.first { $0.state == .expired }?.label }
 
     init() {
-        entries = (try? JSONDecoder().decode([TimerEntry].self, from: Data(contentsOf: file))) ?? []
+        entries = Stored.load([TimerEntry].self, from: file) ?? []
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in self?.tick() }
         tick()
     }
@@ -98,6 +98,8 @@ final class TimersStore {
     }
 
     static func format(_ seconds: Double, showSeconds: Bool) -> String {
+        // A damaged timers file could hold a number too big to turn into whole seconds.
+        let seconds = seconds.isFinite ? min(max(seconds, 0), 359_999) : 0
         let s = Int(seconds.rounded(.up))
         if !showSeconds {
             let m = Int((seconds / 60).rounded(.up))

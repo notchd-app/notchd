@@ -266,16 +266,22 @@ enum AgentHooks {
     /// so Disconnect can put it back exactly.
     static func connectCodex(at link: URL) throws {
         let url = link.resolvingSymlinksInPath()
-        let text = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+        var text = ""
+        if FileManager.default.fileExists(atPath: url.path) {
+            // A file we can't read as text must never be mistaken for an empty one and replaced.
+            guard let existing = try? String(contentsOf: url, encoding: .utf8) else {
+                throw AgentError(L("~/.codex/config.toml couldn't be read as text, so Notchd left it alone."))
+            }
+            text = existing
+        }
         guard !text.contains(marker) else { return }
         var lines = text.isEmpty ? [] : text.components(separatedBy: "\n")
         let ours = "'sh', '-c', '\(codexCommand)', 'notchd'"
         if let index = topLevelNotifyLine(lines) {
             let original = lines[index]
-            guard let open = original.firstIndex(of: "["), let close = original.lastIndex(of: "]"), open < close else {
+            guard let inner = arrayContents(original) else {
                 throw AgentError(L("Codex's notify setting spans several lines. Put it on one line, then try again."))
             }
-            let inner = original[original.index(after: open)..<close].trimmingCharacters(in: .whitespaces)
             lines[index] = "notify = [\(ours)\(inner.isEmpty ? "" : ", " + inner)]  # added by Notchd"
             lines.insert(originalPrefix + original, at: index)
         } else {
@@ -295,6 +301,31 @@ enum AgentHooks {
         }
         if lines.first?.isEmpty == true, !text.contains(originalPrefix) { lines.removeFirst() }
         try write(lines.joined(separator: "\n"), to: url)
+    }
+
+    /// What's between the brackets of `key = [ … ]  # comment`, ignoring brackets and # inside quotes
+    /// and anything in the trailing comment. nil when the array doesn't close on this line.
+    static func arrayContents(_ line: String) -> String? {
+        var quote: Character?, escaped = false
+        var open: String.Index?, close: String.Index?
+        for index in line.indices {
+            let character = line[index]
+            if let current = quote {
+                if escaped { escaped = false }
+                else if character == "\\", current == "\"" { escaped = true }
+                else if character == current { quote = nil }
+            } else if character == "\"" || character == "'" {
+                quote = character
+            } else if character == "#" {
+                break
+            } else if character == "[", open == nil {
+                open = index
+            } else if character == "]" {
+                close = index
+            }
+        }
+        guard let open, let close, open < close else { return nil }
+        return line[line.index(after: open)..<close].trimmingCharacters(in: .whitespaces)
     }
 
     static func hasTopLevelNotify(_ toml: String) -> Bool { topLevelNotifyLine(toml.components(separatedBy: "\n")) != nil }
@@ -336,9 +367,12 @@ enum AgentHooks {
         try write(String(decoding: data, as: UTF8.self) + "\n", to: url)
     }
 
-    /// settings.json → settings.json.notchd-backup, overwritten each time.
+    /// settings.json → settings.json.notchd-backup: the file as it was before Notchd touched it.
+    /// A file that already holds our hook isn't backed up again, so the original copy survives
+    /// connecting and disconnecting any number of times.
     private static func backup(_ url: URL) throws {
         guard FileManager.default.fileExists(atPath: url.path) else { return }
+        if let text = try? String(contentsOf: url, encoding: .utf8), text.contains(marker) { return }
         let copy = url.appendingPathExtension("notchd-backup")
         try? FileManager.default.removeItem(at: copy)
         try FileManager.default.copyItem(at: url, to: copy)

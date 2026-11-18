@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Η πληκτρολόγηση ενεργοποιεί το κλείδωμα· κάντε κλικ στην κλειδαριά για να το απελευθερώσετε.";
 "Volume & brightness:" = "Ένταση και φωτεινότητα:";
 "Show them in the notch" = "Εμφάνιση στην εγκοπή";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Αντικαθιστά την ένδειξη του macOS όσο πατιούνται τα πλήκτρα. Η φωτεινότητα λειτουργεί στην ενσωματωμένη οθόνη.";
 "On every screen" = "Σε κάθε οθόνη";
 "Warn near full volume (orange, then red)" = "Προειδοποίηση κοντά στη μέγιστη ένταση (πορτοκαλί, μετά κόκκινο)";
 "Inner spacing:" = "Εσωτερικό περιθώριο:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Αναμονή για το πρώτο συμβάν";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Η Σύνδεση προσθέτει ένα μικρό hook στο ~/.claude/settings.json ή στο ~/.codex/config.toml (κρατιέται αντίγραφο ασφαλείας δίπλα του). Γράφει αρχεία συμβάντων μόνο στον δικό φάκελο του Notchd και μόνο όσο εκτελείται το Notchd. Μια υπάρχουσα εντολή notify του Codex συνεχίζει να λειτουργεί.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Η ρύθμιση notify του Codex εκτείνεται σε πολλές γραμμές. Βάλτε τη σε μία γραμμή και δοκιμάστε ξανά.";
-
 /* Tray rules and scripts */
 "Any file" = "Οποιοδήποτε αρχείο";
 "Image" = "Εικόνα";
@@ -529,3 +527,12 @@
 "Run" = "Εκτέλεση";
 "No folder chosen" = "Δεν επιλέχθηκε φάκελος";
 "Remove Step" = "Αφαίρεση βήματος";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Η εγκοπή μεγαλώνει για να δείξει το επίπεδο όταν αλλάζετε την ένταση ή τη φωτεινότητα. Η φωτεινότητα λειτουργεί στην ενσωματωμένη οθόνη.";
+"Hide the macOS overlay" = "Απόκρυψη της ένδειξης του macOS";
+"No crash reports" = "Καμία αναφορά κατάρρευσης";
+"1 crash report" = "1 αναφορά κατάρρευσης";
+"%lld crash reports" = "%lld αναφορές κατάρρευσης";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Αν το notchd καταρρεύσει ή παγώσει, αποθηκεύεται μια αναφορά σε αυτό το Mac, στο ~/Library/Logs/Notchd. Τίποτα δεν αποστέλλεται πουθενά.";
+"Finish your capture, then try again." = "Ολοκληρώστε τη λήψη και δοκιμάστε ξανά.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "Το ~/.codex/config.toml δεν ήταν δυνατό να διαβαστεί ως κείμενο, οπότε το Notchd δεν το άγγιξε.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "Το notchd χειρίζεται το ίδιο τα πλήκτρα έντασης και φωτεινότητας, ώστε το macOS να μην εμφανίζει ποτέ τη δική του ένδειξη. Χρειάζεται πρόσβαση Προσβασιμότητας.";

@@ -9,12 +9,18 @@ struct Note: Codable, Identifiable, Equatable {
     var code = false
     var updated = Date()
 
-    /// First line, for the note list.
+    /// First line, for the note list. Remembered per edit: working it out means decoding the whole
+    /// note, and the list asks for it several times on every keystroke.
     var title: String {
+        if let cached = Self.titles[id], cached.updated == updated, cached.code == code { return cached.title }
         let plain = code ? text : (NSAttributedString(rtf: rtf, documentAttributes: nil)?.string ?? "")
-        return plain.split(whereSeparator: \.isNewline).first.map(String.init)?
+        let title = plain.split(whereSeparator: \.isNewline).first.map(String.init)?
             .trimmingCharacters(in: .whitespaces) ?? ""
+        Self.titles[id] = (updated, code, title)
+        return title
     }
+
+    private static var titles: [UUID: (updated: Date, code: Bool, title: String)] = [:]
 }
 
 @Observable
@@ -30,7 +36,7 @@ final class NotesStore {
 
     init(file: URL = URL.appSupport.appendingPathComponent("notes.json")) {
         self.file = file
-        notes = (try? JSONDecoder().decode([Note].self, from: Data(contentsOf: file))) ?? []
+        notes = Stored.load([Note].self, from: file) ?? []
         if notes.isEmpty { notes = [Note()] }
         selectedID = notes.first?.id
     }
@@ -260,7 +266,9 @@ struct NoteEditor: NSViewRepresentable {
         func textDidChange(_ notification: Notification) {
             guard let text = notification.object as? NoteTextView, let noteID else { return }
             if text.code {
-                text.highlight()
+                // Coloring rescans the whole note: wait for a pause in typing.
+                NSObject.cancelPreviousPerformRequests(withTarget: text, selector: #selector(NoteTextView.highlightNow), object: nil)
+                text.perform(#selector(NoteTextView.highlightNow), with: nil, afterDelay: 0.15)
                 NotesStore.shared.update(noteID) { $0.text = text.string }
             } else if let storage = text.textStorage {
                 NotesStore.shared.update(noteID) { $0.rtf = NotesStore.rtf(storage) }
@@ -335,12 +343,15 @@ final class NoteTextView: NSTextView {
     }
 
     /// Light syntax coloring that suits most languages: comments, strings, numbers and common keywords.
+    @objc func highlightNow() { highlight() }
+
     func highlight() {
         guard let storage = textStorage else { return }
         let all = NSRange(location: 0, length: storage.length)
         storage.beginEditing()
         storage.setAttributes(Self.codeAttributes, range: all)
-        if Settings.shared.prefs.notesHighlightCode {
+        // Very long notes stay plain: the patterns would take seconds on them.
+        if Settings.shared.prefs.notesHighlightCode, storage.length <= 200_000 {
             for (regex, color) in Self.rules {
                 regex.enumerateMatches(in: storage.string, range: all) { match, _, _ in
                     if let match { storage.addAttribute(.foregroundColor, value: color, range: match.range) }

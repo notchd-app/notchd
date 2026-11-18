@@ -36,7 +36,7 @@ final class TodoStore {
 
     init(file: URL = URL.appSupport.appendingPathComponent("todos.json")) {
         self.file = file
-        items = (try? JSONDecoder().decode([TodoItem].self, from: Data(contentsOf: file))) ?? []
+        items = Stored.load([TodoItem].self, from: file) ?? []
         clearOld()
         Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { [weak self] _ in self?.clearOld() }
     }
@@ -116,7 +116,7 @@ struct TodoWidget: View {
         if reminders.denied {
             Text("Reminders access needed").font(.system(size: 11)).foregroundStyle(.secondary)
         }
-        ForEach(reminders.reminders, id: \.calendarItemIdentifier) { reminder in
+        ForEach(Array(reminders.reminders.enumerated()), id: \.offset) { _, reminder in
             TaskRow(title: reminder.title ?? "", done: reminder.isCompleted, starred: RemindersStore.isStarred(reminder),
                     due: reminder.dueDateComponents?.date,
                     toggleDone: { reminders.toggleDone(reminder) },
@@ -255,9 +255,19 @@ final class CalendarStore {
         meetingURL(in: [event.url?.absoluteString, event.location, event.notes].compactMap { $0 }.joined(separator: " "))
     }
 
+    private var reloadWork: DispatchWorkItem?
+
+    /// Account syncs announce changes in bursts: reload once they settle, not once per announcement.
+    private func reloadSoon() {
+        reloadWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.reload() }
+        reloadWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: work)
+    }
+
     init() {
         NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: store, queue: .main) { [weak self] _ in
-            self?.reload()
+            self?.reloadSoon()
         }
         // Also rolls the widget over to the new day at midnight.
         NotificationCenter.default.addObserver(forName: .NSCalendarDayChanged, object: nil, queue: .main) { [weak self] _ in
@@ -291,8 +301,8 @@ final class CalendarStore {
             let end = cal.date(byAdding: .day, value: 1, to: day)!
             events = store.events(matching: store.predicateForEvents(withStart: day, end: end, calendars: shown))
                 .filter { prefs.calendarShowAllDay || !$0.isAllDay }
-                .filter { prefs.calendarShowPast || !cal.isDateInToday(day) || $0.endDate > now }
-                .sorted { ($0.isAllDay ? 0 : 1, $0.startDate) < ($1.isAllDay ? 0 : 1, $1.startDate) }
+                .filter { prefs.calendarShowPast || !cal.isDateInToday(day) || $0.end > now }
+                .sorted { ($0.isAllDay ? 0 : 1, $0.start) < ($1.isAllDay ? 0 : 1, $1.start) }
 
             let today = cal.startOfDay(for: now)
             let range = Int(prefs.calendarDays)
@@ -300,8 +310,8 @@ final class CalendarStore {
             let last = cal.date(byAdding: .day, value: range + 1, to: today)!
             var busy = Set<Date>()
             for event in store.events(matching: store.predicateForEvents(withStart: first, end: last, calendars: shown)) {
-                var d = max(cal.startOfDay(for: event.startDate), first)
-                while d < min(event.endDate, last) {
+                var d = max(cal.startOfDay(for: event.start), first)
+                while d < min(event.end, last) {
                     busy.insert(d)
                     d = cal.date(byAdding: .day, value: 1, to: d)!
                 }
@@ -325,11 +335,11 @@ final class CalendarStore {
             let candidates = store.events(matching: store.predicateForEvents(
                 withStart: now, end: now.addingTimeInterval(window), calendars: shownCalendars))
             next = candidates
-                .filter { !$0.isAllDay && $0.endDate > now }
-                .filter { $0.startDate > now || prefs.calendarShowDuringEvent }
+                .filter { !$0.isAllDay && $0.end > now }
+                .filter { $0.start > now || prefs.calendarShowDuringEvent }
                 .map { event in
-                    UpcomingEvent(title: event.title ?? "", start: event.startDate, end: event.endDate,
-                                  color: Color(cgColor: event.calendar.cgColor), meetingURL: Self.meetingURL(of: event))
+                    UpcomingEvent(title: event.title ?? "", start: event.start, end: event.end,
+                                  color: event.color, meetingURL: Self.meetingURL(of: event))
                 }
                 .filter { $0.meetingURL != nil || !prefs.calendarOnlyMeetings }
                 .min { $0.start < $1.start }
@@ -398,8 +408,10 @@ struct CalendarWidget: View {
                 } else if calendar.events.isEmpty {
                     Text(isToday ? "Nothing for today" : "Nothing planned").foregroundStyle(.secondary)
                 }
-                ForEach(calendar.events, id: \.calendarItemIdentifier) { event in
+                // Repeating events share an identifier, so the start time is part of the row's identity.
+                ForEach(Array(calendar.events.enumerated()), id: \.offset) { _, event in
                     EventRow(event: event)
+                        .id("\(event.calendarItemIdentifier)-\(event.start.timeIntervalSince1970)")
                 }
             }
             .font(.system(size: 11))
@@ -474,7 +486,7 @@ private struct EventRow: View {
     var body: some View {
         let meeting = CalendarStore.meetingURL(of: event)
         HStack(spacing: 6) {
-            Capsule().fill(Color(cgColor: event.calendar.cgColor)).frame(width: 3)
+            Capsule().fill(event.color).frame(width: 3)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 3) {
                     if meeting != nil { Image(systemName: "video.fill").font(.system(size: 8)).foregroundStyle(.green) }
@@ -484,8 +496,8 @@ private struct EventRow: View {
                     if event.isAllDay {
                         Text("All day")
                     } else {
-                        Text(event.startDate, format: .dateTime.hour().minute())
-                            + Text(" – ") + Text(event.endDate, format: .dateTime.hour().minute())
+                        Text(event.start, format: .dateTime.hour().minute())
+                            + Text(" – ") + Text(event.end, format: .dateTime.hour().minute())
                     }
                 }
                 .foregroundStyle(.secondary)
@@ -574,7 +586,15 @@ struct CalendarActivityTrailing: View {
 
     /// Rounds up so "starts in 30s" reads 1m, never 0m.
     static func format(_ seconds: TimeInterval) -> String {
-        let minutes = Int((seconds / 60).rounded(.up))
+        let minutes = Int(((seconds.isFinite ? min(max(seconds, 0), 8_640_000) : 0) / 60).rounded(.up))
         return minutes < 60 ? "\(minutes)m" : String(format: "%dh%02d", minutes / 60, minutes % 60)
     }
+}
+
+/// EventKit hands these out as "never nil", but an event whose calendar was just removed, or one that
+/// changed under us during a sync, can come back without them, which would crash on use.
+extension EKEvent {
+    var start: Date { (startDate as Date?) ?? .distantPast }
+    var end: Date { (endDate as Date?) ?? start }
+    var color: Color { ((calendar as EKCalendar?)?.cgColor as CGColor?).map { Color(cgColor: $0) } ?? .gray }
 }

@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "입력하면 잠금이 켜집니다. 잠금을 클릭하면 해제됩니다.";
 "Volume & brightness:" = "음량 및 밝기:";
 "Show them in the notch" = "노치에 표시";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "키를 누르는 동안 macOS 오버레이를 대체합니다. 밝기는 내장 디스플레이에서 작동합니다.";
 "On every screen" = "모든 화면에서";
 "Warn near full volume (orange, then red)" = "최대 음량에 가까우면 경고(주황색, 그다음 빨간색)";
 "Inner spacing:" = "내부 여백:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "첫 이벤트를 기다리는 중";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "연결하면 ~/.claude/settings.json 또는 ~/.codex/config.toml에 작은 후크가 추가됩니다(백업이 옆에 보관됨). Notchd가 실행 중일 때만 Notchd 자체 폴더에 이벤트 파일을 기록합니다. 기존 Codex notify 명령은 계속 작동합니다.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex의 notify 설정이 여러 줄에 걸쳐 있습니다. 한 줄로 작성한 다음 다시 시도하세요.";
-
 /* Tray rules and scripts */
 "Any file" = "모든 파일";
 "Image" = "이미지";
@@ -529,3 +527,12 @@
 "Run" = "실행";
 "No folder chosen" = "선택한 폴더 없음";
 "Remove Step" = "단계 제거";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "음량이나 밝기를 변경하면 노치가 커지면서 레벨을 표시합니다. 밝기는 내장 디스플레이에서 작동합니다.";
+"Hide the macOS overlay" = "macOS 오버레이 가리기";
+"No crash reports" = "충돌 리포트 없음";
+"1 crash report" = "충돌 리포트 1개";
+"%lld crash reports" = "충돌 리포트 %lld개";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "notchd가 충돌하거나 멈추면 리포트가 이 Mac의 ~/Library/Logs/Notchd에 저장됩니다. 어디에도 전송되지 않습니다.";
+"Finish your capture, then try again." = "캡처를 마친 다음 다시 시도하십시오.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml을 텍스트로 읽을 수 없어 Notchd가 변경하지 않았습니다.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd가 음량 및 밝기 키를 직접 처리하므로 macOS 자체 팝업이 표시되지 않습니다. 손쉬운 사용 접근 권한이 필요합니다.";

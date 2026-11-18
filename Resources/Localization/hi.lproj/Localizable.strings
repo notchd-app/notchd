@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "टाइप करने से लॉक चालू होता है; छोड़ने के लिए लॉक पर क्लिक करें।";
 "Volume & brightness:" = "वॉल्यूम और ब्राइटनेस:";
 "Show them in the notch" = "इन्हें नॉच में दिखाएँ";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "कुंजियाँ दबाए रखने पर macOS ओवरले की जगह लेता है। ब्राइटनेस बिल्ट-इन डिस्प्ले पर काम करती है।";
 "On every screen" = "हर स्क्रीन पर";
 "Warn near full volume (orange, then red)" = "पूरे वॉल्यूम के पास चेतावनी दें (नारंगी, फिर लाल)";
 "Inner spacing:" = "भीतरी स्पेसिंग:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "पहले इवेंट का इंतज़ार है";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "कनेक्ट करने पर ~/.claude/settings.json या ~/.codex/config.toml में एक छोटा हुक जुड़ जाता है (उसके पास एक बैकअप रखा जाता है)। यह केवल Notchd के अपने फ़ोल्डर में इवेंट फ़ाइलें लिखता है, और सिर्फ़ तब जब Notchd चल रहा हो। Codex की मौजूदा notify कमांड काम करती रहती है।";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex की notify सेटिंग कई पंक्तियों में फैली है। इसे एक पंक्ति में रखें, फिर दोबारा कोशिश करें।";
-
 /* Tray rules and scripts */
 "Any file" = "कोई भी फ़ाइल";
 "Image" = "इमेज";
@@ -529,3 +527,12 @@
 "Run" = "चलाएँ";
 "No folder chosen" = "कोई फ़ोल्डर नहीं चुना गया";
 "Remove Step" = "चरण हटाएँ";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "वॉल्यूम या ब्राइटनेस बदलने पर नॉच बड़ा होकर स्तर दिखाता है। ब्राइटनेस बिल्ट-इन डिस्प्ले पर काम करती है।";
+"Hide the macOS overlay" = "macOS ओवरले छिपाएँ";
+"No crash reports" = "कोई क्रैश रिपोर्ट नहीं";
+"1 crash report" = "1 क्रैश रिपोर्ट";
+"%lld crash reports" = "%lld क्रैश रिपोर्ट";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "अगर notchd क्रैश या फ़्रीज़ होता है, तो इस Mac पर ~/Library/Logs/Notchd में एक रिपोर्ट सहेजी जाती है। कहीं कुछ नहीं भेजा जाता।";
+"Finish your capture, then try again." = "अपना कैप्चर पूरा करें, फिर दोबारा कोशिश करें।";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml को टेक्स्ट के रूप में पढ़ा नहीं जा सका, इसलिए Notchd ने इसे नहीं छुआ।";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd वॉल्यूम और ब्राइटनेस कुंजियों को ख़ुद सँभालता है, इसलिए macOS अपना पॉप-अप कभी नहीं दिखाता। ऐक्सेसिबिलिटी ऐक्सेस आवश्यक है।";

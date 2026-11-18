@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Písanie zapne zámok; kliknutím na zámok ho uvoľníte.";
 "Volume & brightness:" = "Hlasitosť a jas:";
 "Show them in the notch" = "Zobrazovať ich vo výreze";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Nahrádza prekrytie macOS počas stláčania klávesov. Jas funguje na vstavanom displeji.";
 "On every screen" = "Na každej obrazovke";
 "Warn near full volume (orange, then red)" = "Varovať pri takmer plnej hlasitosti (oranžová, potom červená)";
 "Inner spacing:" = "Vnútorný okraj:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Čaká sa na prvú udalosť";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Pripojiť pridá malý hook do ~/.claude/settings.json alebo ~/.codex/config.toml (vedľa zostane záloha). Zapisuje len súbory udalostí do vlastného priečinka Notchd, a to len počas behu Notchd. Existujúci príkaz notify v Codexe bude naďalej fungovať.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Nastavenie notify v Codexe zaberá viac riadkov. Dajte ho na jeden riadok a skúste to znova.";
-
 /* Tray rules and scripts */
 "Any file" = "Akýkoľvek súbor";
 "Image" = "Obrázok";
@@ -529,3 +527,12 @@
 "Run" = "Spustiť";
 "No folder chosen" = "Nie je vybraný priečinok";
 "Remove Step" = "Odstrániť krok";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Pri zmene hlasitosti alebo jasu sa výrez zväčší a ukáže úroveň. Jas funguje na vstavanom displeji.";
+"Hide the macOS overlay" = "Skryť prekrytie macOS";
+"No crash reports" = "Žiadne hlásenia o páde";
+"1 crash report" = "1 hlásenie o páde";
+"%lld crash reports" = "Hlásenia o páde: %lld";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Ak notchd spadne alebo zamrzne, hlásenie sa uloží na tomto Macu do priečinka ~/Library/Logs/Notchd. Nič sa nikam neodosiela.";
+"Finish your capture, then try again." = "Dokončite snímanie a skúste to znova.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml sa nepodarilo prečítať ako text, a tak ho Notchd nechal tak.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd obsluhuje klávesy hlasitosti a jasu sám, takže macOS nikdy nezobrazí vlastný ukazovateľ. Vyžaduje prístup k prístupnosti.";

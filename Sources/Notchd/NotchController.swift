@@ -321,6 +321,13 @@ final class NotchController {
         return false
     }
 
+    /// Sideways swipes skip tracks on the closed notch and on Home. In the Tray and Clipboard they
+    /// scroll the row of files, and a swipe that lands just outside the row (the header, the padding,
+    /// an empty tray) must not change the song either.
+    static func sidewaysSwipeChangesTrack(isOpen: Bool, tab: NotchModel.Tab, dropping: Bool) -> Bool {
+        !isOpen || (tab == .nook && !dropping)
+    }
+
     /// Trackpad: fingers down opens, fingers up closes (or hides an activity); sideways changes track.
     private func handleScroll(_ event: NSEvent) {
         let prefs = Settings.shared.prefs
@@ -334,7 +341,9 @@ final class NotchController {
         // Only act on a clearly dominant axis, so diagonal swipes don't do both.
         if abs(scrollX) > 40, abs(scrollX) > 2 * abs(scrollY) {
             scrollConsumed = true
-            changeTrack(fingersRight: scrollX > 0)
+            if Self.sidewaysSwipeChangesTrack(isOpen: model.isOpen, tab: model.tab, dropping: model.dropping) {
+                changeTrack(fingersRight: scrollX > 0)
+            }
             return
         }
         guard prefs.gestureOpenClose, abs(scrollY) > 20, abs(scrollY) > abs(scrollX) else { return }

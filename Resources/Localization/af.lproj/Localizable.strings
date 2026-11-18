@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Tik skakel die slot aan; klik op die slot om dit los te maak.";
 "Volume & brightness:" = "Volume en helderheid:";
 "Show them in the notch" = "Wys hulle in die kerf";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Vervang die macOS-oorleg terwyl die sleutels gedruk word. Helderheid werk op die ingeboude skerm.";
 "On every screen" = "Op elke skerm";
 "Warn near full volume (orange, then red)" = "Waarsku naby vol volume (oranje, dan rooi)";
 "Inner spacing:" = "Binnespasiëring:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Wag vir sy eerste gebeurtenis";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Koppel voeg ’n klein hoek by ~/.claude/settings.json of ~/.codex/config.toml (’n rugsteun word daarlangs gehou). Dit skryf net gebeurtenislêers na Notchd se eie vouer, en net terwyl Notchd loop. ’n Bestaande Codex-notify-opdrag werk steeds.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex se notify-instelling strek oor verskeie reëls. Sit dit op een reël en probeer dan weer.";
-
 /* Tray rules and scripts */
 "Any file" = "Enige lêer";
 "Image" = "Beeld";
@@ -529,3 +527,12 @@
 "Run" = "Voer uit";
 "No folder chosen" = "Geen gids gekies nie";
 "Remove Step" = "Verwyder stap";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Die kerf word groter om die vlak te wys wanneer jy die volume of helderheid verander. Helderheid werk op die ingeboude skerm.";
+"Hide the macOS overlay" = "Versteek die macOS-oorleg";
+"No crash reports" = "Geen ineenstortingsverslae nie";
+"1 crash report" = "1 ineenstortingsverslag";
+"%lld crash reports" = "%lld ineenstortingsverslae";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "As notchd ineenstort of vries, word ’n verslag op hierdie Mac gestoor, in ~/Library/Logs/Notchd. Niks word enige plek heen gestuur nie.";
+"Finish your capture, then try again." = "Voltooi jou skermopname en probeer dan weer.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml kon nie as teks gelees word nie, so Notchd het dit uitgelos.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd hanteer self die volume- en helderheidsleutels, sodat macOS nooit sy eie opspringer wys nie. Benodig Toeganklikheid-toegang.";

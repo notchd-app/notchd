@@ -100,7 +100,7 @@ private func temporary(_ name: String) -> URL {
     store.clear()
     #expect(store.items.map(\.text) == ["two"])
 
-    store.save()
+    store.save(wait: true)
     #expect(ClipboardStore(folder: folder, pasteboard: pasteboard).items.map(\.text) == ["two"])
 
     // Copying back puts it on the pasteboard without recording it twice.
@@ -447,4 +447,130 @@ private func temporary(_ name: String) -> URL {
 @Test func networkCountersAreReadable() throws {
     let (down, up) = try #require(StatsMonitor.interfaceBytes())
     #expect(down + up > 0)  // any Mac that ran this test has moved some bytes
+}
+
+// MARK: - Robustness
+
+@Test func codexNotifyArraysAreReadCarefully() {
+    #expect(AgentHooks.arrayContents(#"notify = ["a", "b"]"#) == #""a", "b""#)
+    // Brackets and # inside quotes or in the trailing comment don't count.
+    #expect(AgentHooks.arrayContents(#"notify = ["x"] # see [docs]"#) == #""x""#)
+    #expect(AgentHooks.arrayContents(#"notify = ["a]#b", 'c[']  # note"#) == #""a]#b", 'c['"#)
+    #expect(AgentHooks.arrayContents("notify = [") == nil)
+    #expect(AgentHooks.arrayContents("notify = []") == "")
+}
+
+@Test func codexConfigThatIsNotTextIsLeftAlone() throws {
+    let file = temporary("codex-binary")
+    defer { try? FileManager.default.removeItem(at: file) }
+    let bytes = Data([0xFF, 0xFE, 0x00, 0xC3, 0x28])  // not valid UTF-8
+    try bytes.write(to: file)
+    #expect(throws: AgentHooks.AgentError.self) { try AgentHooks.connectCodex(at: file) }
+    #expect(try Data(contentsOf: file) == bytes)
+}
+
+@Test func agentBackupKeepsTheOriginalFile() throws {
+    let folder = temporary("backup")
+    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: folder) }
+    let codex = folder.appendingPathComponent("config.toml")
+    let original = "model = \"o3\"\n"
+    try Data(original.utf8).write(to: codex)
+    try AgentHooks.connectCodex(at: codex)
+    try AgentHooks.disconnectCodex(at: codex)   // must not replace the backup with the hooked file
+    #expect(try String(contentsOf: URL(fileURLWithPath: codex.path + ".notchd-backup"), encoding: .utf8) == original)
+}
+
+@Test func settingsSurviveValuesTheyCannotRead() throws {
+    let preferences = TestPreferences()
+    var stored = Prefs()
+    stored.trayMoveOnDrop = true
+    stored.calendarDays = 5
+    var dict = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(stored)) as? [String: Any])
+    // As a newer version might have left them: an activity and a widget this one doesn't know,
+    // a duplicate, a value of the wrong type, and numbers no slider allows.
+    dict["activities"] = [["kind": "hologram", "enabled": true], ["kind": "media", "enabled": false],
+                          ["kind": "media", "enabled": true]]
+    dict["widgets"] = [["kind": "todo", "enabled": true, "customUnits": 3], ["kind": "teleporter", "enabled": true]]
+    dict["mediaEffect"] = "fireworks"
+    dict["calendarDays"] = -4
+    dict["pomodoroRounds"] = 900
+    preferences.defaults.set(try JSONSerialization.data(withJSONObject: dict), forKey: "prefs")
+
+    let prefs = Settings(defaults: preferences.defaults).prefs
+    #expect(prefs.trayMoveOnDrop)                                   // everything readable is kept
+    #expect(prefs.mediaEffect == Prefs().mediaEffect)               // only the unreadable value resets
+    #expect(prefs.activities.count == ActivityKind.allCases.count)  // unknown and duplicate kinds are gone
+    #expect(prefs.activities.first { $0.kind == .media }?.enabled == false)
+    #expect(prefs.widgets.first { $0.kind == .todo } == Slot(kind: .todo, customUnits: 3))
+    #expect(prefs.widgets.count == WidgetKind.allCases.count)
+    #expect(prefs.calendarDays == 1)
+    #expect(prefs.pomodoroRounds == 8)
+}
+
+@Test func unreadableSavedFilesAreKeptAside() throws {
+    let folder = temporary("stored")
+    try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: folder) }
+    let file = folder.appendingPathComponent("todos.json")
+    try Data(#"[{"id":"not finished"#.utf8).write(to: file)   // cut short, as after a crash
+    let store = TodoStore(file: file)
+    #expect(store.items.isEmpty)
+    store.items = [TodoItem(title: "new")]                    // the next save must not destroy the old data
+    let kept = try FileManager.default.contentsOfDirectory(atPath: folder.path).filter { $0.contains("unreadable") }
+    #expect(kept.count == 1)
+    #expect(try String(contentsOf: folder.appendingPathComponent(kept[0]), encoding: .utf8).contains("not finished"))
+    // A missing or empty file is simply a fresh start.
+    #expect(Stored.load([TodoItem].self, from: folder.appendingPathComponent("none.json")) == nil)
+}
+
+@Test func oddNumbersDoNotTrap() {
+    #expect(TimersStore.format(.infinity, showSeconds: true) == "0:00")
+    #expect(TimersStore.format(1e300, showSeconds: true) == "99:59:59")
+    #expect(TimersStore.format(-5, showSeconds: false) == "0 min")
+    #expect(CalendarActivityTrailing.format(.infinity) == "0m")
+}
+
+@Test func crashReportsAreSavedForSessionsThatDidNotQuitNormally() throws {
+    let logs = temporary("logs"), system = temporary("system")
+    for folder in [logs, system] { try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true) }
+    defer { [logs, system].forEach { try? FileManager.default.removeItem(at: $0) } }
+    let log = logs.appendingPathComponent(CrashReporter.logName)
+    let reports = logs.appendingPathComponent("Crash Reports")
+    func saved() -> [String] { ((try? FileManager.default.contentsOfDirectory(atPath: reports.path)) ?? []).sorted() }
+
+    // A normal quit: no report, and the log is kept as the previous one.
+    try Data("=== notchd 1.0 launched\n[Power] woke up\n2026 Notchd[1:2] \(CrashReporter.cleanExitLine)\n".utf8).write(to: log)
+    #expect(CrashReporter.collect(logs: logs, systemReports: system) == nil)
+    #expect(saved().isEmpty)
+    #expect(FileManager.default.fileExists(atPath: logs.appendingPathComponent("notchd-previous.log").path))
+    #expect(!FileManager.default.fileExists(atPath: log.path))
+
+    // A crash: the log is saved with macOS's own report from that session, but not older ones.
+    try Data("=== notchd 1.0 launched\n\(CrashReporter.crashMarker): SIGTRAP\nBacktrace…\n".utf8).write(to: log)
+    let old = system.appendingPathComponent("Notchd-old.ips"), new = system.appendingPathComponent("Notchd-new.ips")
+    try Data("old".utf8).write(to: old)
+    try FileManager.default.setAttributes([.modificationDate: Date(timeIntervalSinceNow: -86_400)], ofItemAtPath: old.path)
+    try Data("new".utf8).write(to: new)
+    try Data("other".utf8).write(to: system.appendingPathComponent("Safari-new.ips"))
+    #expect(CrashReporter.collect(logs: logs, systemReports: system) != nil)
+    let files = saved()
+    #expect(files.count == 2)
+    #expect(files.contains("Notchd-new.ips"))
+    let report = try #require(files.first { $0.hasPrefix("Notchd crash ") })
+    #expect(try String(contentsOf: reports.appendingPathComponent(report), encoding: .utf8).contains("SIGTRAP"))
+
+    // Killed or lost power: no crash recorded, but it didn't quit either.
+    try Data("=== notchd 1.0 launched\n[Screens] changed\n".utf8).write(to: log)
+    #expect(CrashReporter.collect(logs: logs, systemReports: system, now: Date(timeIntervalSinceNow: 5)) != nil)
+    #expect(saved().contains { $0.hasPrefix("Notchd stopped unexpectedly ") })
+
+    // A freeze the user sat through, then quit: still worth keeping.
+    try Data("=== launched\n\(CrashReporter.freezeMarker): 9 s\n[Watchdog] the app is responding again\n\(CrashReporter.cleanExitLine)\n".utf8)
+        .write(to: log)
+    #expect(CrashReporter.collect(logs: logs, systemReports: system, now: Date(timeIntervalSinceNow: 10)) != nil)
+    #expect(saved().contains { $0.hasPrefix("Notchd froze ") })
+
+    #expect(CrashReporter.endedCleanly("a\nb \(CrashReporter.cleanExitLine)\n\n"))
+    #expect(!CrashReporter.endedCleanly("a\n\(CrashReporter.cleanExitLine)\nmore"))
 }

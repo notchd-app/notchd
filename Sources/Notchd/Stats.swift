@@ -79,7 +79,7 @@ final class StatsMonitor {
             ticks[1] += user + system + nice + idle
         }
         defer { lastTicks = ticks }
-        guard let last = lastTicks, ticks[1] > last[1] else { return nil }
+        guard let last = lastTicks, ticks[1] > last[1], ticks[0] >= last[0] else { return nil }  // counters can reset
         return Double(ticks[0] - last[0]) / Double(ticks[1] - last[1])
     }
 

@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Nhập sẽ bật khóa; bấm vào khóa để nhả.";
 "Volume & brightness:" = "Âm lượng & độ sáng:";
 "Show them in the notch" = "Hiển thị trong tai thỏ";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Thay thế lớp phủ của macOS khi nhấn phím. Độ sáng hoạt động trên màn hình tích hợp.";
 "On every screen" = "Trên mọi màn hình";
 "Warn near full volume (orange, then red)" = "Cảnh báo khi gần âm lượng tối đa (cam, rồi đỏ)";
 "Inner spacing:" = "Khoảng cách bên trong:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Đang chờ sự kiện đầu tiên";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Kết nối sẽ thêm một hook nhỏ vào ~/.claude/settings.json hoặc ~/.codex/config.toml (một bản sao lưu được giữ bên cạnh). Nó chỉ ghi các tệp sự kiện vào thư mục riêng của Notchd và chỉ khi Notchd đang chạy. Lệnh notify hiện có của Codex vẫn tiếp tục hoạt động.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Cài đặt notify của Codex trải dài trên nhiều dòng. Hãy đưa nó về một dòng rồi thử lại.";
-
 /* Tray rules and scripts */
 "Any file" = "Bất kỳ tệp nào";
 "Image" = "Hình ảnh";
@@ -529,3 +527,12 @@
 "Run" = "Chạy";
 "No folder chosen" = "Chưa chọn thư mục";
 "Remove Step" = "Xóa bước";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Tai thỏ mở rộng để hiển thị mức khi bạn thay đổi âm lượng hoặc độ sáng. Độ sáng hoạt động trên màn hình tích hợp.";
+"Hide the macOS overlay" = "Ẩn lớp phủ của macOS";
+"No crash reports" = "Không có báo cáo sự cố";
+"1 crash report" = "1 báo cáo sự cố";
+"%lld crash reports" = "%lld báo cáo sự cố";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Nếu notchd gặp sự cố hoặc bị treo, một báo cáo sẽ được lưu trên máy Mac này, trong ~/Library/Logs/Notchd. Không có gì được gửi đi đâu cả.";
+"Finish your capture, then try again." = "Hãy hoàn tất việc chụp màn hình, rồi thử lại.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "Không thể đọc ~/.codex/config.toml dưới dạng văn bản nên Notchd không thay đổi tệp này.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd tự xử lý các phím âm lượng và độ sáng, nên macOS không bao giờ hiển thị cửa sổ bật lên của riêng nó. Cần quyền truy cập Trợ năng.";

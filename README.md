@@ -116,7 +116,7 @@ Everything you copy appears in the notch's **Clipboard** tab: text, links, image
 - Everything stays on your Mac, in Application Support.
 
 ### More in the notch
-- **Volume, brightness and keyboard backlight** show in the notch instead of the macOS overlay (Settings → General).
+- **Volume, brightness and keyboard backlight**: change one and the notch grows to show the level, with a bar and an icon that follows it. On by default, and notchd handles those keys itself so macOS doesn't show its own pop-up too. That needs Accessibility access, which notchd asks for once; until it's given (or if you turn off **Hide the macOS overlay** in Settings → General) both show.
 - **Keep awake**: the cup in the open notch keeps your Mac (and its display) from sleeping, for a while or until you stop it.
 - **Coding agents**: Settings → Live Activities → Coding Agents connects Claude Code and Codex with one click. It adds a tiny hook to their config (with a backup) that drops event files into Notchd's folder; nothing leaves your Mac.
 
@@ -127,7 +127,7 @@ Everything you copy appears in the notch's **Clipboard** tab: text, links, image
 </p>
 
 - Pill-shaped or rounded-square buttons, frosted glass background (experimental), inner spacing.
-- Trackpad gestures: swipe down/up to open/close, sideways to skip tracks (direction reversible).
+- Trackpad gestures: swipe down/up to open/close, sideways to skip tracks on the closed notch and on Home (direction reversible).
 - Handle size for screens without a notch, or hide it until hovered.
 - Notch size adjustment, haptics on/off, launch at login, presentation mode for recordings.
 
@@ -174,7 +174,7 @@ notchd only asks for what a feature needs, the first time it needs it:
 | Camera | Mirror widget |
 | Location | Weather for where you are (or pick a city instead) |
 | Downloads folder | Download finished activity |
-| Accessibility | Pasting from the clipboard history into other apps |
+| Accessibility | Pasting from the clipboard history into other apps; hiding the macOS volume and brightness overlay |
 | Full Disk Access | Focus activity: macOS keeps Focus status in a protected folder |
 
 Now Playing works without any permission through [mediaremote-adapter](https://github.com/ungive/mediaremote-adapter).
@@ -189,6 +189,9 @@ Maintainers set it up once:
 ```
 
 Back up `~/.notchd-signing`: a new certificate means everyone re-grants permissions once, and installed copies won't auto-update across the switch. Without the secrets, CI falls back to ad-hoc signing.
+
+### Crash reports
+notchd keeps a log of the current session in `~/Library/Logs/Notchd/notchd.log`. If it crashes, is force quit, or freezes, the next launch saves a report in `~/Library/Logs/Notchd/Crash Reports`: what went wrong, where in the code, the log leading up to it, and a copy of macOS's own crash report. Nothing is ever sent anywhere. Settings › About shows how many reports there are and opens the folder; attach the newest one when you [report a problem](https://github.com/notchd-app/notchd/issues).
 
 ## Gestures cheat sheet
 
@@ -214,6 +217,8 @@ Sources/Notchd/
   Clipboard / Pomodoro / Stats / Weather / Lyrics / ColorPicker .swift
   Focus / Privacy / Downloads / Agents / KeepAwake / AudioDevices .swift
   TrayActions.swift     zip, image conversion, background removal, PDFs
+  CrashReporter.swift   session log, crash and freeze reports (local only)
+  Persistence.swift     safe loading of the app's saved files
   TrayRules / TrayScripts .swift  automatic tray rules, your own scripts
   Grid.swift            unit-based widget layout
   Settings.swift        preferences (one JSON blob) and the Settings window

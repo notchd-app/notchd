@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Куцање укључује закључавање; кликните на катанац да бисте га отпустили.";
 "Volume & brightness:" = "Јачина звука и осветљеност:";
 "Show them in the notch" = "Прикажи их у зарезу";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Замењује macOS приказ док су тастери притиснути. Осветљеност ради на уграђеном екрану.";
 "On every screen" = "На сваком екрану";
 "Warn near full volume (orange, then red)" = "Упозори близу пуне јачине (наранџасто, па црвено)";
 "Inner spacing:" = "Унутрашњи размак:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Чека се први догађај";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Повежи додаје мали hook у ~/.claude/settings.json или ~/.codex/config.toml (резервна копија се чува поред). Он само уписује датотеке догађаја у Notchd-ову фасциклу, и то само док Notchd ради. Постојећа Codex notify команда наставља да ради.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex-ово notify подешавање се протеже у више редова. Ставите га у један ред, па покушајте поново.";
-
 /* Tray rules and scripts */
 "Any file" = "Било који фајл";
 "Image" = "Слика";
@@ -529,3 +527,12 @@
 "Run" = "Покрени";
 "No folder chosen" = "Фасцикла није изабрана";
 "Remove Step" = "Уклони корак";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Зарез се повећава да прикаже ниво када промените јачину звука или осветљеност. Осветљеност ради на уграђеном екрану.";
+"Hide the macOS overlay" = "Сакриј macOS приказ";
+"No crash reports" = "Нема извештаја о паду";
+"1 crash report" = "1 извештај о паду";
+"%lld crash reports" = "Извештаја о паду: %lld";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Ако notchd падне или се замрзне, извештај се чува на овом Mac-у, у ~/Library/Logs/Notchd. Ништа се никуда не шаље.";
+"Finish your capture, then try again." = "Завршите снимање, па покушајте поново.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml није могао да се прочита као текст, па га Notchd није дирао.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd сам обрађује тастере за јачину звука и осветљеност, па macOS никада не приказује сопствени приказ. Потребан је приступ у Приступачности.";

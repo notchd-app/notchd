@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "Kirjoittaminen kytkee lukon päälle; vapauta se klikkaamalla lukkoa.";
 "Volume & brightness:" = "Äänenvoimakkuus ja kirkkaus:";
 "Show them in the notch" = "Näytä ne lovessa";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "Korvaa macOS:n ilmaisimen näppäimiä painettaessa. Kirkkaus toimii sisäisessä näytössä.";
 "On every screen" = "Kaikissa näytöissä";
 "Warn near full volume (orange, then red)" = "Varoita lähes täydestä äänenvoimakkuudesta (oranssi, sitten punainen)";
 "Inner spacing:" = "Sisäväli:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "Odotetaan ensimmäistä tapahtumaa";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "Yhdistä lisää pienen koukun tiedostoon ~/.claude/settings.json tai ~/.codex/config.toml (varmuuskopio säilytetään sen vieressä). Se kirjoittaa tapahtumatiedostoja vain Notchdin omaan kansioon ja vain silloin, kun Notchd on käynnissä. Olemassa oleva Codexin notify-komento toimii edelleen.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codexin notify-asetus on usealla rivillä. Siirrä se yhdelle riville ja yritä uudelleen.";
-
 /* Tray rules and scripts */
 "Any file" = "Mikä tahansa tiedosto";
 "Image" = "Kuva";
@@ -529,3 +527,12 @@
 "Run" = "Suorita";
 "No folder chosen" = "Kansiota ei ole valittu";
 "Remove Step" = "Poista vaihe";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "Lovi kasvaa näyttämään tason, kun muutat äänenvoimakkuutta tai kirkkautta. Kirkkaus toimii sisäisessä näytössä.";
+"Hide the macOS overlay" = "Kätke macOS:n ilmaisin";
+"No crash reports" = "Ei kaatumisraportteja";
+"1 crash report" = "1 kaatumisraportti";
+"%lld crash reports" = "%lld kaatumisraporttia";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "Jos notchd kaatuu tai jumiutuu, raportti tallennetaan tälle Macille kansioon ~/Library/Logs/Notchd. Mitään ei lähetetä minnekään.";
+"Finish your capture, then try again." = "Viimeistele kaappaus ja yritä sitten uudelleen.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "Tiedostoa ~/.codex/config.toml ei voitu lukea tekstinä, joten Notchd jätti sen ennalleen.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd käsittelee äänenvoimakkuus- ja kirkkausnäppäimet itse, joten macOS ei koskaan näytä omaa ilmaisintaan. Vaatii Käyttöapu-oikeuden.";

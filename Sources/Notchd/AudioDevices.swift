@@ -103,6 +103,19 @@ enum AudioDevices {
         }
     }
 
+    /// Whether the default output has a volume we can set (HDMI and some USB outputs don't).
+    static var canSetVolume: Bool {
+        var address = address(kAudioHardwareServiceDeviceProperty_VirtualMainVolume, scope: kAudioDevicePropertyScopeOutput)
+        var settable: DarwinBoolean = false
+        return AudioObjectIsPropertySettable(defaultOutput, &address, &settable) == noErr && settable.boolValue
+    }
+
+    static func setMuted(_ muted: Bool) {
+        var mute = UInt32(muted ? 1 : 0)
+        var address = address(kAudioDevicePropertyMute, scope: kAudioDevicePropertyScopeOutput)
+        AudioObjectSetPropertyData(defaultOutput, &address, 0, nil, UInt32(MemoryLayout<UInt32>.size), &mute)
+    }
+
     private static func address(_ selector: AudioObjectPropertySelector,
                                 scope: AudioObjectPropertyScope) -> AudioObjectPropertyAddress {
         AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)

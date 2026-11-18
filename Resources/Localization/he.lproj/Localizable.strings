@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "הקלדה מפעילה את הנעילה; יש ללחוץ על המנעול כדי לשחרר אותה.";
 "Volume & brightness:" = "עוצמת קול ובהירות:";
 "Show them in the notch" = "הצגתם במגרעת";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "מחליף את תצוגת macOS בזמן לחיצה על המקשים. בהירות פועלת בצג המובנה.";
 "On every screen" = "בכל מסך";
 "Warn near full volume (orange, then red)" = "אזהרה כשעוצמת הקול קרובה למקסימום (כתום, ואז אדום)";
 "Inner spacing:" = "ריווח פנימי:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "ממתין לאירוע הראשון";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "״חיבור״ מוסיף hook קטן ל־~/.claude/settings.json או ל־~/.codex/config.toml (גיבוי נשמר לצידו). הוא כותב קובצי אירועים רק לתיקייה של Notchd עצמו, ורק כש־Notchd פועל. פקודת notify קיימת של Codex ממשיכה לעבוד.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "הגדרת notify של Codex משתרעת על כמה שורות. יש להעביר אותה לשורה אחת ולנסות שוב.";
-
 /* Tray rules and scripts */
 "Any file" = "כל קובץ";
 "Image" = "תמונה";
@@ -529,3 +527,12 @@
 "Run" = "הרצה";
 "No folder chosen" = "לא נבחרה תיקייה";
 "Remove Step" = "הסרת השלב";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "המגרעת גדלה כדי להציג את הרמה בעת שינוי עוצמת הקול או הבהירות. בהירות פועלת בצג המובנה.";
+"Hide the macOS overlay" = "הסתרת תצוגת macOS";
+"No crash reports" = "אין דוחות קריסה";
+"1 crash report" = "דוח קריסה אחד";
+"%lld crash reports" = "%lld דוחות קריסה";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "אם notchd קורס או נתקע, נשמר דוח ב־Mac הזה, ב־~/Library/Logs/Notchd. שום דבר לא נשלח לשום מקום.";
+"Finish your capture, then try again." = "יש לסיים את הצילום ולנסות שוב.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "לא ניתן היה לקרוא את ~/.codex/config.toml כטקסט, לכן Notchd לא נגע בו.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd מטפל בעצמו במקשי עוצמת הקול והבהירות, כך ש־macOS אף פעם לא מציג את החלונית שלו. דורש גישת ״נגישות״.";

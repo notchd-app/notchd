@@ -171,6 +171,8 @@ final class TrayStore {
     }
 
     private func add(_ urls: [URL], move: Bool) {
+        // Files deleted in Finder meanwhile would otherwise come back as a second entry with the same name.
+        if files.contains(where: { !fileManager.fileExists(atPath: $0.path) }) { reconcile() }
         var added: [String] = []
         // Dragging a tray file back onto the tray is a no-op, not a duplicate.
         for url in urls where url.deletingLastPathComponent().standardizedFileURL != folder.standardizedFileURL {
@@ -205,6 +207,7 @@ final class TrayStore {
         do {
             try fileManager.trashItem(at: url, resultingItemURL: nil)
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { files.removeAll { $0 == url } }
+            selection.remove(url)
             pruneStacks()
         } catch {
             NSLog("[Tray] trash failed: \(error)")
@@ -888,6 +891,8 @@ struct TrayItemInteraction: NSViewRepresentable {
                                       contents: NSWorkspace.shared.icon(forFile: file.path))
                 return item
             }
+            // The file may have just left the tray (auto-clear): a drag of nothing raises an exception.
+            guard !items.isEmpty else { return }
             beginDraggingSession(with: items, event: down, source: self)
         }
 

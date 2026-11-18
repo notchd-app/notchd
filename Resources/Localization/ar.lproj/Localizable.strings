@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "الكتابة تُفعّل القفل؛ انقر على القفل لتحريره.";
 "Volume & brightness:" = "مستوى الصوت والسطوع:";
 "Show them in the notch" = "إظهارهما في النتوء";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "يحل محل مؤشر macOS أثناء الضغط على المفاتيح. يعمل السطوع على الشاشة المدمجة.";
 "On every screen" = "على كل شاشة";
 "Warn near full volume (orange, then red)" = "التحذير قرب أقصى مستوى صوت (برتقالي، ثم أحمر)";
 "Inner spacing:" = "التباعد الداخلي:";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "في انتظار أول حدث منه";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "يضيف الاتصال خطافًا صغيرًا إلى ~/.claude/settings.json أو ~/.codex/config.toml (مع الاحتفاظ بنسخة احتياطية بجانبه). ولا يكتب إلا ملفات الأحداث في مجلد Notchd الخاص، وفقط أثناء تشغيل Notchd. ويستمر أمر notify الحالي في Codex في العمل.";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "يمتد إعداد notify في Codex على عدة أسطر. ضعه في سطر واحد، ثم حاول مرة أخرى.";
-
 /* Tray rules and scripts */
 "Any file" = "أي ملف";
 "Image" = "صورة";
@@ -529,3 +527,12 @@
 "Run" = "تشغيل";
 "No folder chosen" = "لم يتم اختيار مجلد";
 "Remove Step" = "إزالة الخطوة";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "يكبر النتوء لإظهار المستوى عند تغيير مستوى الصوت أو السطوع. يعمل السطوع على الشاشة المدمجة.";
+"Hide the macOS overlay" = "إخفاء مؤشر macOS";
+"No crash reports" = "لا توجد تقارير أعطال";
+"1 crash report" = "تقرير عطل واحد";
+"%lld crash reports" = "تقارير الأعطال: %lld";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "إذا تعطّل notchd أو توقف عن الاستجابة، يُحفظ تقرير على هذا الـ Mac في ~/Library/Logs/Notchd. لا يُرسل أي شيء إلى أي مكان.";
+"Finish your capture, then try again." = "أنهِ الالتقاط ثم حاول مرة أخرى.";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "تعذّرت قراءة ~/.codex/config.toml كنص، لذلك لم يغيّره Notchd.";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "يتولى notchd مفاتيح الصوت والسطوع بنفسه، فلا يعرض macOS نافذته المنبثقة أبدًا. يتطلب الوصول إلى إمكانية الوصول.";

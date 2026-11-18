@@ -78,7 +78,6 @@
 "Typing turns the lock on; click the lock to release it." = "輸入時會開啟鎖定；按一下鎖頭即可解除。";
 "Volume & brightness:" = "音量與亮度：";
 "Show them in the notch" = "在瀏海中顯示";
-"Replaces the macOS overlay while the keys are pressed. Brightness works on the built-in display." = "按下按鍵時取代 macOS 的浮層。亮度適用於內建顯示器。";
 "On every screen" = "在每個螢幕上";
 "Warn near full volume (orange, then red)" = "接近最大音量時警告（先橘色，後紅色）";
 "Inner spacing:" = "內距：";
@@ -481,7 +480,6 @@
 "Waiting for its first event" = "正在等待第一個事件";
 "Connect adds a small hook to ~/.claude/settings.json or ~/.codex/config.toml (a backup is kept next to it). It only writes event files into Notchd's own folder, and only while Notchd is running. An existing Codex notify command keeps working." = "「連接」會在 ~/.claude/settings.json 或 ~/.codex/config.toml 中加入一個小型掛鉤（並在旁邊保留備份）。它只會在 Notchd 執行時將事件檔案寫入 Notchd 自己的檔案夾。現有的 Codex notify 指令仍可正常運作。";
 "Codex's notify setting spans several lines. Put it on one line, then try again." = "Codex 的 notify 設定跨越了多行。請將其改為一行，然後再試一次。";
-
 /* Tray rules and scripts */
 "Any file" = "任意檔案";
 "Image" = "影像";
@@ -529,3 +527,12 @@
 "Run" = "執行";
 "No folder chosen" = "未選擇檔案夾";
 "Remove Step" = "移除步驟";
+"The notch grows to show the level when you change the volume or brightness. Brightness works on the built-in display." = "調整音量或亮度時，瀏海會擴大以顯示目前的程度。亮度適用於內建顯示器。";
+"Hide the macOS overlay" = "隱藏 macOS 的浮層";
+"No crash reports" = "沒有當機報告";
+"1 crash report" = "1 份當機報告";
+"%lld crash reports" = "%lld 份當機報告";
+"If notchd crashes or freezes, a report is saved on this Mac, in ~/Library/Logs/Notchd. Nothing is sent anywhere." = "如果 notchd 當機或停止回應，報告會儲存在這部 Mac 上的 ~/Library/Logs/Notchd 中。不會傳送到任何地方。";
+"Finish your capture, then try again." = "請先完成螢幕擷取或錄製，然後再試一次。";
+"~/.codex/config.toml couldn't be read as text, so Notchd left it alone." = "~/.codex/config.toml 無法以文字讀取，因此 Notchd 未作更動。";
+"notchd handles the volume and brightness keys itself, so macOS never shows its own pop-up. Needs Accessibility access." = "notchd 會自行處理音量鍵和亮度鍵，因此 macOS 不會再顯示內建的彈出提示。需要輔助使用取用權限。";

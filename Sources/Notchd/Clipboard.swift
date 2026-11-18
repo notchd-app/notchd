@@ -82,7 +82,7 @@ final class ClipboardStore {
         index = folder.appendingPathComponent("history.json")
         lastChange = pasteboard.changeCount
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        items = (try? JSONDecoder().decode([ClipItem].self, from: Data(contentsOf: index))) ?? []
+        items = Stored.load([ClipItem].self, from: index) ?? []
     }
 
     /// Starts or stops watching to follow the setting.
@@ -129,20 +129,25 @@ final class ClipboardStore {
         if change == ownChange { return }
         let source = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
         let ignored = Settings.shared.prefs.clipboardIgnoredApps
-        if Self.isImageOnly(pasteboard) {
-            // Encoding and hashing a big screenshot takes a moment: do it off the main thread.
-            guard Self.allowed(pasteboard, source: source, ignoredApps: ignored),
-                  let raw = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff) else { return }
-            let folder = folder
-            DispatchQueue.global(qos: .utility).async { [weak self] in
-                guard let item = Self.imageItem(raw, source: source, folder: folder) else { return }
-                DispatchQueue.main.async { self?.record(item) }
+        let folder = folder, pasteboard = pasteboard
+        // Off the main thread: apps hand over what was copied only when asked, so a busy or frozen app
+        // (or a huge image) would otherwise freeze the notch until it answers.
+        Self.readQueue.async { [weak self] in
+            guard let item = Self.read(pasteboard, source: source, ignoredApps: ignored, imageFolder: folder) else { return }
+            // Something else was copied while we were reading: this one is already history.
+            guard pasteboard.changeCount == change else {
+                if let name = item.imageFile { try? FileManager.default.removeItem(at: folder.appendingPathComponent(name)) }
+                return
             }
-            return
+            DispatchQueue.main.async { self?.record(item) }
         }
-        guard let item = Self.read(pasteboard, source: source, ignoredApps: ignored, imageFolder: folder) else { return }
-        record(item)
     }
+
+    private static let readQueue = DispatchQueue(label: "notchd.clipboard.read", qos: .utility)
+    private static let writeQueue = DispatchQueue(label: "notchd.clipboard.write", qos: .utility)
+    /// Longer text isn't kept: a copied log or database dump would slow every later copy and search.
+    static let maxTextBytes = 1_000_000
+    static let maxImageBytes = 80_000_000
 
     /// No files and no text: the copy is a picture.
     static func isImageOnly(_ pasteboard: NSPasteboard) -> Bool {
@@ -183,10 +188,11 @@ final class ClipboardStore {
         }
         if let string = pasteboard.string(forType: .string),
            !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            guard string.utf8.count <= maxTextBytes else { return nil }
             return ClipItem(kind: isLink(string) ? .link : .text, text: string, sourceApp: source)
         }
         if types.contains(NSPasteboard.PasteboardType.png.rawValue) || types.contains(NSPasteboard.PasteboardType.tiff.rawValue),
-           let raw = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff) {
+           let raw = pasteboard.data(forType: .png) ?? pasteboard.data(forType: .tiff), raw.count <= maxImageBytes {
             return imageItem(raw, source: source, folder: imageFolder)
         }
         return nil
@@ -349,8 +355,12 @@ final class ClipboardStore {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: work)
     }
 
-    func save() {
-        try? JSONEncoder().encode(items).write(to: index, options: .atomic)
+    /// Encodes and writes in the background; `wait` (at quit) returns once it's on disk.
+    func save(wait: Bool = false) {
+        saveWork?.cancel()
+        let items = items, index = index
+        let write = { try? JSONEncoder().encode(items).write(to: index, options: .atomic) }
+        if wait { Self.writeQueue.sync { _ = write() } } else { Self.writeQueue.async { _ = write() } }
     }
 }
 
@@ -617,8 +627,10 @@ private struct ClipCard: View {
     @ViewBuilder private var content: some View {
         switch item.kind {
         case .text:
-            Text(item.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
-                .font(.system(size: 10, design: Self.looksLikeCode(item.text ?? "") ? .monospaced : .default))
+            // Four lines are shown: don't lay out (or scan) a megabyte for them.
+            let preview = String((item.text ?? "").prefix(600))
+            Text(preview.trimmingCharacters(in: .whitespacesAndNewlines))
+                .font(.system(size: 10, design: Self.looksLikeCode(preview) ? .monospaced : .default))
                 .lineLimit(4)
         case .link:
             VStack(alignment: .leading, spacing: 2) {

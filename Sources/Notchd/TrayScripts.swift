@@ -81,22 +81,28 @@ enum TrayScripts {
         do { try process.run() } catch {
             throw TrayActions.ActionError(String(localized: "“\(name)” couldn't start. Does it begin with a line like #!/bin/sh?"))
         }
-        // Read on the side: a script that fills the pipe would otherwise never finish.
-        var message = Data()
-        let reading = DispatchGroup()
-        reading.enter()
-        DispatchQueue.global().async {
-            message = errors.fileHandleForReading.readDataToEndOfFile()
-            reading.leave()
+        // Read on the side: a script that fills the pipe would otherwise never finish. Not a blocking
+        // read: a script that leaves a child holding stderr open would park a thread forever, every run.
+        let lock = NSLock()
+        var collected = Data()
+        errors.fileHandleForReading.readabilityHandler = { handle in
+            let data = handle.availableData
+            if data.isEmpty { handle.readabilityHandler = nil; return }
+            lock.lock()
+            if collected.count < 64_000 { collected.append(data) }
+            lock.unlock()
         }
+        defer { errors.fileHandleForReading.readabilityHandler = nil }
         if exited.wait(timeout: .now() + timeout) == .timedOut {
             process.terminate()
             throw TrayActions.ActionError(String(localized: "“\(name)” took longer than \(Int(timeout)) seconds and was stopped."))
         }
-        // A background child may still hold stderr open: then there's no message to show.
-        let read = reading.wait(timeout: .now() + 1) == .success
         guard process.terminationStatus == 0 else {
-            let text = read ? String(decoding: message, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines) : ""
+            Thread.sleep(forTimeInterval: 0.05)  // let the last lines arrive
+            lock.lock()
+            let message = collected
+            lock.unlock()
+            let text = String(decoding: message, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
             throw TrayActions.ActionError(text.isEmpty ? String(localized: "“\(name)” failed (exit code \(process.terminationStatus)).") : text)
         }
         return try FileManager.default.contentsOfDirectory(at: output, includingPropertiesForKeys: nil)

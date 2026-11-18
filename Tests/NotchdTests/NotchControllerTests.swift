@@ -44,3 +44,37 @@ import Testing
     #expect(NotchController.scrollViewContains(NSPoint(x: 200, y: 180), in: content))
     #expect(!NotchController.scrollViewContains(NSPoint(x: 200, y: 30), in: content))
 }
+
+@Test func sidewaysSwipesOnlySkipTracksOnHomeOrTheClosedNotch() {
+    #expect(NotchController.sidewaysSwipeChangesTrack(isOpen: false, tab: .tray, dropping: false))
+    #expect(NotchController.sidewaysSwipeChangesTrack(isOpen: true, tab: .nook, dropping: false))
+    #expect(!NotchController.sidewaysSwipeChangesTrack(isOpen: true, tab: .tray, dropping: false))
+    #expect(!NotchController.sidewaysSwipeChangesTrack(isOpen: true, tab: .clipboard, dropping: false))
+    #expect(!NotchController.sidewaysSwipeChangesTrack(isOpen: true, tab: .nook, dropping: true))
+}
+
+@Test func volumeKeysAreRecognised() {
+    // data1 for "volume up, key down" as macOS sends it: key 0 in the high word, 0x0A = down.
+    #expect(HUDCenter.volumeKey(subtype: 8, data1: 0x0000_0A00)?.down == true)
+    #expect(HUDCenter.volumeKey(subtype: 8, data1: 0x0001_0B00)?.down == false)   // volume down, key up
+    #expect(HUDCenter.volumeKey(subtype: 8, data1: 0x0007_0A00)?.code == 7)       // mute
+    #expect(HUDCenter.volumeKey(subtype: 8, data1: 0x0010_0A00) == nil)           // play/pause
+    #expect(HUDCenter.volumeKey(subtype: 7, data1: 0x0000_0A00) == nil)
+}
+
+@Test func volumeKeysStepLikeMacOS() {
+    // Up and down move one of 16 steps and stop at the ends.
+    #expect(HUDCenter.volumeAfterKey(0, level: 0.5, muted: false, fine: false).level == 0.5625)
+    #expect(HUDCenter.volumeAfterKey(1, level: 0.5, muted: false, fine: false).level == 0.4375)
+    #expect(HUDCenter.volumeAfterKey(0, level: 1, muted: false, fine: false).level == 1)
+    #expect(HUDCenter.volumeAfterKey(1, level: 0, muted: false, fine: false).level == 0)
+    // An in-between level (set with a slider) snaps to the grid first.
+    #expect(HUDCenter.volumeAfterKey(0, level: 0.63, muted: false, fine: false).level == 0.6875)
+    // ⌥⇧ moves a quarter step.
+    #expect(HUDCenter.volumeAfterKey(0, level: 0.5, muted: false, fine: true).level == 0.515625)
+    // Mute toggles and keeps the level; volume up while muted only unmutes.
+    #expect(HUDCenter.volumeAfterKey(7, level: 0.5, muted: false, fine: false) == (0.5, true))
+    #expect(HUDCenter.volumeAfterKey(7, level: 0.5, muted: true, fine: false) == (0.5, false))
+    #expect(HUDCenter.volumeAfterKey(0, level: 0.5, muted: true, fine: false) == (0.5, false))
+    #expect(HUDCenter.volumeAfterKey(1, level: 0.5, muted: true, fine: false) == (0.4375, true))
+}

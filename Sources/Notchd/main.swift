@@ -12,7 +12,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { ActivityCenter.shared.show(.hello, for: 2) }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main
-        ) { [weak self] _ in self?.rebuildWindows() }
+        ) { [weak self] _ in
+            NSLog("[Screens] changed: %@", NSScreen.screens.map { "\($0.localizedName) \(Int($0.frame.width))x\(Int($0.frame.height))" }
+                .joined(separator: ", "))
+            self?.rebuildWindows()
+        }
+        let workspace = NSWorkspace.shared.notificationCenter
+        workspace.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { _ in NSLog("[Power] going to sleep") }
+        workspace.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in NSLog("[Power] woke up") }
+        CrashReporter.debugCrashIfAsked()
         NotificationCenter.default.addObserver(forName: .notchLayoutChanged, object: nil, queue: .main) { [weak self] _ in
             self?.rebuildWindows()
         }
@@ -76,7 +84,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         // Dev: `-debugSnapshot /path.png [-debugSnapshotDelay 2.5]` saves the notch as an image (no Screen Recording needed).
         if let path = UserDefaults.standard.string(forKey: "debugSnapshot") {
-            let delay = UserDefaults.standard.object(forKey: "debugSnapshotDelay") as? Double ?? 2.5
+            let delay = max(UserDefaults.standard.double(forKey: "debugSnapshotDelay"), 2.5)  // launch arguments arrive as strings
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                 // With --settings, the Settings window; otherwise the notch.
                 if CommandLine.arguments.contains("--settings"),
@@ -160,10 +168,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        ClipboardStore.shared.save()
+        ClipboardStore.shared.save(wait: true)
+        NotesStore.shared.save()  // edits from the last moments are otherwise still waiting to be written
         KeepAwake.shared.turnOff()
         HUDCenter.shared.stop()
         MediaManager.shared.stop()
+        CrashReporter.markCleanExit()
     }
 
     private func rebuildWindows() {
@@ -175,6 +185,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+CrashReporter.install()
 let app = NSApplication.shared
 let delegate = AppDelegate()
 app.delegate = delegate

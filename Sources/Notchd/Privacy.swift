@@ -29,14 +29,28 @@ final class PrivacyMonitor {
         }
     }
 
+    private static let queue = DispatchQueue(label: "notchd.privacy", qos: .utility)
+    private var checking = false
+
+    /// Asks the audio and camera services off the main thread: they can stall while a device is being
+    /// plugged in or after wake, and the notch shouldn't freeze with them.
     private func refresh() {
+        guard !checking else { return }
+        checking = true
         // The Mirror widget is us: don't warn about our own camera.
-        let cam = Self.cameraRunning() && !Camera.shared.session.isRunning
-        let mic = Self.microphoneRunning()
-        guard cam != camera || mic != microphone else { return }
-        withAnimation(cam || mic ? .notchOpen : .notchClose) {
-            camera = cam
-            microphone = mic
+        let mirror = Camera.shared.session.isRunning
+        Self.queue.async { [weak self] in
+            let cam = Self.cameraRunning() && !mirror
+            let mic = Self.microphoneRunning()
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.checking = false
+                guard self.timer != nil, cam != self.camera || mic != self.microphone else { return }
+                withAnimation(cam || mic ? .notchOpen : .notchClose) {
+                    self.camera = cam
+                    self.microphone = mic
+                }
+            }
         }
     }
 

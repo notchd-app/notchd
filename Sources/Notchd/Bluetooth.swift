@@ -1,3 +1,4 @@
+import CoreBluetooth
 import IOBluetooth
 import SwiftUI
 
@@ -11,11 +12,33 @@ struct BluetoothEvent: Equatable {
 }
 
 /// Flashes a live activity when a Bluetooth device connects or disconnects.
-final class BluetoothMonitor: NSObject {
+final class BluetoothMonitor: NSObject, CBCentralManagerDelegate {
     static let shared = BluetoothMonitor()
     private var suppressUntil = Date.distantFuture
+    private var registered = false
+    /// Only exists to ask for Bluetooth access without blocking.
+    private var permission: CBCentralManager?
 
+    /// IOBluetooth waits on the main thread for the permission prompt to be answered, which froze the
+    /// whole app (no notch at all) on first launch. So ask through CoreBluetooth, which doesn't block,
+    /// and only touch IOBluetooth once access is granted.
     func start() {
+        switch CBCentralManager.authorization {
+        case .allowedAlways: register()
+        case .notDetermined: permission = CBCentralManager(delegate: self, queue: .main)
+        default: break  // denied or restricted: no Bluetooth activity
+        }
+    }
+
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        guard CBCentralManager.authorization != .notDetermined else { return }
+        if CBCentralManager.authorization == .allowedAlways { register() }
+        permission = nil
+    }
+
+    private func register() {
+        guard !registered else { return }
+        registered = true
         // Registering replays a connect notification for every already-connected device: ignore that burst.
         suppressUntil = Date().addingTimeInterval(3)
         IOBluetoothDevice.register(forConnectNotifications: self, selector: #selector(connected(_:device:)))

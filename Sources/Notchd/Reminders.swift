@@ -14,8 +14,18 @@ final class RemindersStore {
 
     init() {
         NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: store, queue: .main) { [weak self] _ in
-            self?.reload()
+            self?.reloadSoon()
         }
+    }
+
+    private var reloadWork: DispatchWorkItem?
+
+    /// Changes arrive in bursts (and our own saves announce themselves too): reload once they settle.
+    private func reloadSoon() {
+        reloadWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.reload() }
+        reloadWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: work)
     }
 
     /// Asks for Reminders access the first time it's needed.
@@ -51,7 +61,11 @@ final class RemindersStore {
             let done = store.predicateForCompletedReminders(withCompletionDateStarting: since, ending: nil, calendars: [list])
             store.fetchReminders(matching: done) { completed in
                 let all = (incomplete ?? []) + (prefs.todoShowCompleted ? completed ?? [] : [])
-                DispatchQueue.main.async { self.reminders = Self.sorted(all) }
+                // Sorted on the main thread: reading reminders here could race with edits made there.
+                DispatchQueue.main.async {
+                    var seen = Set<String>()
+                    self.reminders = Self.sorted(all.filter { seen.insert($0.calendarItemIdentifier).inserted })
+                }
             }
         }
     }

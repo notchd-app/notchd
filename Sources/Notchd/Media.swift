@@ -45,6 +45,7 @@ final class MediaManager {
     private var state: [String: Any] = [:]
     private var buffer = Data()
     private var hideWork: DispatchWorkItem?
+    private var restartDelay = 1.0
 
     private var resources: URL? { Bundle.main.resourceURL }
 
@@ -75,11 +76,26 @@ final class MediaManager {
         process.standardOutput = pipe
         pipe.fileHandleForReading.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
+            // At end of file the handler is called over and over with nothing: stop, or it spins a core
+            // and floods the main thread for as long as the app runs.
+            if data.isEmpty { handle.readabilityHandler = nil; return }
             DispatchQueue.main.async { self?.consume(data) }
         }
-        // The adapter dies with its parent only if we kill it; restart it if it crashes.
-        process.terminationHandler = { [weak self] _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self?.start() }
+        // The adapter dies with its parent only if we kill it; restart it if it crashes. One that keeps
+        // dying right away is retried less and less often (2 s, 4 s … 2 min) instead of forever every 2 s.
+        let startedAt = Date()
+        process.terminationHandler = { [weak self] finished in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                let lived = Date().timeIntervalSince(startedAt)
+                self.restartDelay = lived > 30 ? 2 : min(self.restartDelay * 2, 120)
+                NSLog("[Media] helper exited (status %d) after %.0f s; restarting in %.0f s", finished.terminationStatus, lived,
+                      self.restartDelay)
+                self.buffer.removeAll()
+                self.state = [:]
+                self.apply()
+                DispatchQueue.main.asyncAfter(deadline: .now() + self.restartDelay) { self.start() }
+            }
         }
         do { try process.run() } catch { return NSLog("[Media] failed to start adapter: \(error)") }
         self.process = process
@@ -155,6 +171,8 @@ final class MediaManager {
 
     private func consume(_ data: Data) {
         buffer.append(data)
+        // A line is a few hundred KB at most (artwork included): anything far bigger is a helper gone wrong.
+        if buffer.count > 32_000_000 { buffer.removeAll() }
         while let newline = buffer.firstIndex(of: 0x0A) {
             let line = buffer[buffer.startIndex..<newline]
             buffer = Data(buffer[buffer.index(after: newline)...])
@@ -194,8 +212,13 @@ final class MediaManager {
         info.album = state["album"] as? String ?? ""
         info.bundleID = bundleID
         info.playing = state["playing"] as? Bool ?? false
-        info.duration = state["duration"] as? Double ?? 0
-        info.elapsed = state["elapsedTime"] as? Double ?? 0
+        // Live streams can report infinite or absurd lengths, which trap when turned into whole seconds.
+        func sane(_ value: Any?) -> Double {
+            let number = value as? Double ?? 0
+            return number.isFinite && number >= 0 && number < 1_000_000 ? number : 0
+        }
+        info.duration = sane(state["duration"])
+        info.elapsed = min(sane(state["elapsedTime"]), info.duration > 0 ? info.duration : 1_000_000)
         if let ts = state["timestamp"] as? String { info.timestamp = ISO8601DateFormatter().date(from: ts) ?? Date() }
 
         // Decoding artwork is the expensive bit: reuse it while the track doesn't change.
